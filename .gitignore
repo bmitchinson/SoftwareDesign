@@ -1,0 +1,4 @@
+# SWD GitIgnore
+
+#IntelliJ
+.idea/
