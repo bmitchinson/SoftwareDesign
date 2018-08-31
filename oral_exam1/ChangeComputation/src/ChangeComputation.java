@@ -19,12 +19,13 @@ public class ChangeComputation {
             printMenu();
             // TODO: Do I need to validate nextInt? Try catch?
             choice = input.nextInt();
-            switch (choice){
+            /*switch (choice){
                 (1){
 
                 }
-            }
+            }*/
             // Choice switch statement for register operations.
+            System.out.println();
         }
     }
 
