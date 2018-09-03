@@ -2,12 +2,10 @@ import java.util.Scanner;
 
 public class ChangeComputation {
 
-    // Import Register
+    // TODO: JDoc Comments
     public static void main(String args[]){
-        System.out.println("\nWelcome to SWD Register:" +
+        System.out.println("\nWelcome to Ben's SWD Register:" +
                 "\n*****************************\n");
-        // Display welcome message
-        // Initialize new Register
         Register mainReg = new Register();
 
         Scanner input = new Scanner(System.in);
@@ -15,18 +13,25 @@ public class ChangeComputation {
         int choice = 0;
         while (choice != 9){
             mainReg.printTotals();
-            // Display menu options
             printMenu();
-            // TODO: Do I need to validate nextInt? Try catch?
+            // TODO: validate nextInt? Try catch?
             choice = input.nextInt();
-            /*switch (choice){
-                (1){
+            switch (choice){
+                case 1:
+                    System.out.println("Charging customer for an item.");
+                    mainReg.chargeCustomer();
+                    break;
+                case 9:
+                    System.out.println("Closing Register");
+                    break;
+                default:
+                    System.out.println("Ahhh what? invalid input. Try again.");
+            }
 
-                }
-            }*/
             // Choice switch statement for register operations.
             System.out.println();
         }
+        System.exit(0);
     }
 
     private static void printMenu(){

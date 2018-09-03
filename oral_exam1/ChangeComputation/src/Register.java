@@ -1,11 +1,15 @@
 import java.security.SecureRandom;
 
+//TODO: Java Docs
 public class Register {
 
     // Create array of ints for each value type
     private int[] currencyArray = new int[8];
     private String[] valueTitleArray = { "Pennies:", "Nickels:", "Dimes:",
             "Quarters:", "Single:", "Fives:", "Tens:", "Twenties:"};
+
+    // TODO: Move this to a string int pair?
+    //     Value should be the actual dollar amount honestly, not count.
 
     public Register(){
         SecureRandom randomNumbers = new SecureRandom();
@@ -27,7 +31,37 @@ public class Register {
         }
     }
 
-    // TODO: Calculate total change in register
+    // TODO: It's fine that this is public right? He was just talking about
+    // leaving variables private?
+    public void chargeCustomer(){
+        /*  TODO: Complete function
+         *  Asks for charge cost, stores as String
+         *  Parses int and separates by decimal, validates
+         *  Confirms amount "Y/N"
+         *  Asks for payment made, stores as String
+         *  Parses int and separates by decimal, validates
+         *  Confirms amount "Y/N"
+         *  Calculates change due, iterates through highest to lowest units,
+         *      taking into account register totals (non infinite)
+         *      What happens if it's not possible?
+         *      Somehow stacking what's been removed, as reg needs to output
+         *          how many of each unit
+         *  Outputs change (or impossible?), how many of each unit, enter to exit loop.
+         */
+    }
+
+    public void manualTransaction(){
+        // TODO: Complete Function
+        /* Charge or Credit?
+        *  Asks for charge/credit cost, stores as String
+        *  Call charge or credit func? Cause below is repeated code.
+        *  Parses int and separates by decimal, validates
+        *  Confirms amount "Y/N"
+        *  Iterates down and adds currency
+        *
+        *  Add Another? Y/N
+        */
+    }
 
     // ?: Constructor iterates through array and randomizes.
         // Is there a way to do that upon assignment instead of iteration?
