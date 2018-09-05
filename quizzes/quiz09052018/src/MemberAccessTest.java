@@ -1,12 +1,12 @@
-// Fig. 2.1: Welcome1.java
-// Text-printing program.
-
-public class Welcome1 {
-    // main method begins execution of Java application
+// Fig. 8.3: MemberAccessTest.java
+// Private members of class Time1 are not accessible.
+public class MemberAccessTest {
     public static void main(String[] args) {
-        System.out.println("Welcome to Java Programming!");
-    } // end method main
-} // end class Welcome1
+        Time1 time = new Time1(); // create and initialize Time1 object
+        // Replaced individual private setters
+        time.setTime(7,15,30);
+    }
+} // end class MemberAccessTest
 
 
 /**************************************************************************
