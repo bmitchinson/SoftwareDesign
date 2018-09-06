@@ -1,15 +1,18 @@
 import java.security.SecureRandom;
 
-//TODO: Java Docs
+/**
+ * A class dedicated to the inner operations of the cash register, and storing
+ * it's values of currency inside a private map.
+ *
+ */
 public class Register {
 
-    // Create array of ints for each value type
+    // TODO: What's that thing in the S4 Instructions that details the double?
+    // TODO: Move this to a string int pair within a map
+    //     Value should be the actual dollar amount honestly, not count.
     private int[] currencyArray = new int[8];
     private String[] valueTitleArray = { "Pennies:", "Nickels:", "Dimes:",
             "Quarters:", "Single:", "Fives:", "Tens:", "Twenties:"};
-
-    // TODO: Move this to a string int pair?
-    //     Value should be the actual dollar amount honestly, not count.
 
     public Register(){
         SecureRandom randomNumbers = new SecureRandom();
@@ -26,7 +29,6 @@ public class Register {
             System.out.print(
               // %[argument_index$][flags][width][.precision]conversion
               String.format("%-12s %4s %n",valueTitleArray[i],currencyArray[i])
-              // TODO: add subtotals of amounts? Multiplyer and total in reg?
             );
         }
     }
