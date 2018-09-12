@@ -12,13 +12,14 @@ public class ChangeComputation {
 
     /**
      * Main method that runs through the menu loop, validates choice input, and
-     *   initializes a new Register object for use.
-     * @author Ben Mitchinson
-     * @since Aug 25th 2018
+     * initializes a new Register object for use.
+     *
      * @param args Unused
      * @return Nothing
+     * @author Ben Mitchinson
+     * @since Aug 25th 2018
      */
-    public static void main(String args[]){
+    public static void main(String args[]) {
         System.out.println("\nWelcome to Ben's SWD Register" +
                 "\n*****************************\n");
         Register mainReg = new Register();
@@ -26,7 +27,7 @@ public class ChangeComputation {
         Scanner input = new Scanner(System.in);
         int choice = 0;
 
-        while (choice != 9){
+        while (choice != 9) {
             mainReg.printTotals();
             printMenu();
             while (!input.hasNextInt()) {
@@ -36,7 +37,7 @@ public class ChangeComputation {
                 printMenu();
             }
             choice = input.nextInt();
-            switch (choice){
+            switch (choice) {
                 case 1:
                     System.out.println("Charging customer for an item:");
                     mainReg.chargeCustomer();
@@ -58,10 +59,11 @@ public class ChangeComputation {
     }
 
     /**
-     * Prints all menu selection options to the user.
+     * Prints all menu selection options to the user
+     *
      * @return Nothing
      */
-    private static void printMenu(){
+    private static void printMenu() {
         System.out.println("\nOptions:\n*****************************");
         System.out.println("1.) Charge Customer for an Item");
         System.out.println("2.) Manually add a transaction");
