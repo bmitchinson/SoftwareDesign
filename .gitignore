@@ -1,7 +1,7 @@
 # SWD GitIgnore
 
 #IntelliJ
-.idea/
+# .idea/
 
 # Compiled class file
 *.class
