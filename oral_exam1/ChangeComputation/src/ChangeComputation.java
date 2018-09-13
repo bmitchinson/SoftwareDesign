@@ -26,12 +26,14 @@ public class ChangeComputation {
 
         Scanner input = new Scanner(System.in);
         int choice = 0;
+        int centsCharged;
+        int centsPaid;
 
         while (choice != 9) {
             mainReg.printTotals();
             printMenu();
             while (!input.hasNextInt()) {
-                System.out.println("Please enter an integer choice.");
+                System.out.println("Please enter an integer option.");
                 // Use input.next to get rid of given input, essentially a clear.
                 input.next();
                 printMenu();
@@ -39,17 +41,30 @@ public class ChangeComputation {
             choice = input.nextInt();
             switch (choice) {
                 case 1:
-                    System.out.println("Charging customer for an item:");
-                    mainReg.chargeCustomer();
+                    System.out.print("How much (in cents) would you like to charge them:");
+                    while (!input.hasNextInt()){
+                        System.out.print("Please enter a dollar amount in cents " +
+                                "(Ex: $20.58 as '2058'):");
+                        input.next();
+                    }
+                    centsCharged = input.nextInt();
+                    System.out.print("How much (in cents) did they pay?:");
+                    while (!input.hasNextInt()){
+                        System.out.print("Please enter a dollar amount in cents " +
+                                "(Ex: $20.58 as '2058'):");
+                        input.next();
+                    }
+                    centsPaid = input.nextInt();
+                    mainReg.chargeCustomer(centsCharged, centsPaid);
                     break;
                 case 2:
                     System.out.println("Manually adding a transaction:");
-                    mainReg.chargeCustomer();
+                    mainReg.manualTransaction();
                     break;
                 case 9:
                     break;
                 default:
-                    System.out.println("Ahhh what? That wasn't a choice. Try again.");
+                    System.out.println("Ahhh what? That wasn't an option. Try again.");
             }
             System.out.println();
         }
@@ -63,6 +78,7 @@ public class ChangeComputation {
      *
      * @return Nothing
      */
+    // EXPLAIN: Static?
     private static void printMenu() {
         System.out.println("\nOptions:\n*****************************");
         System.out.println("1.) Charge Customer for an Item");
