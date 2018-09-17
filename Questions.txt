@@ -1,0 +1,7 @@
+Comments like in ChangeComputation.java reminding myself okay?
+Java Docs enough?
+Wiki Double Check?
+Laptop idea folder check? Does project run fine?
+Double check extra comments, but use:
+	EXPLAIN
+	TODO

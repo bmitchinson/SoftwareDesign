@@ -1,7 +1,7 @@
 # SWD GitIgnore
 
 #IntelliJ
-.idea/
+.idea/workspace.xml
 
 # Compiled class file
 *.class
