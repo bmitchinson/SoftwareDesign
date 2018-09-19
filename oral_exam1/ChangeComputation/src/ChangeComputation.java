@@ -23,46 +23,79 @@ public class ChangeComputation {
         System.out.println("\nWelcome to Ben's SWD Register" +
                 "\n*****************************\n");
         Register mainReg = new Register();
-
         Scanner input = new Scanner(System.in);
+
         int choice = 0;
         int centsCharged;
         int centsPaid;
+        boolean pos;
+        int transactionCents;
 
         while (choice != 9) {
             mainReg.printTotals();
             printMenu();
             while (!input.hasNextInt()) {
                 System.out.println("Please enter an integer option.");
-                // Use input.next to get rid of given input, essentially a clear.
+                // Use input.next to get rid of extra newline, essentially a clear.
                 input.next();
                 printMenu();
             }
             choice = input.nextInt();
+            input.nextLine();
+
             switch (choice) {
-                case 1:
+                case 1: // Charging a customer
                     System.out.print("How much (in cents) would you like to charge them:");
-                    while (!input.hasNextInt()){
+                    while (!input.hasNextInt()) {
                         System.out.print("Please enter a dollar amount in cents " +
                                 "(Ex: $20.58 as '2058'):");
                         input.next();
                     }
                     centsCharged = input.nextInt();
+                    input.nextLine();
                     System.out.print("How much (in cents) did they pay?:");
-                    while (!input.hasNextInt()){
+                    while (!input.hasNextInt()) {
                         System.out.print("Please enter a dollar amount in cents " +
                                 "(Ex: $20.58 as '2058'):");
                         input.next();
                     }
                     centsPaid = input.nextInt();
+                    input.nextLine();
                     mainReg.chargeCustomer(centsCharged, centsPaid);
+                    input.nextLine();
                     break;
-                case 2:
-                    System.out.println("Manually adding a transaction:");
-                    mainReg.manualTransaction();
+
+                case 2: // Adding a manual transaction to the register
+                    choice = 0;
+                    System.out.println("Would you like to add a...");
+                    System.out.println("1.) Positive transaction");
+                    System.out.println("2.) Negative transaction");
+                    System.out.print("Choice:");
+                    while (choice != 1 && choice != 2 && !input.hasNextInt()) {
+                        System.out.print("Please enter a 1 or 2:");
+                        input.next();
+                    }
+                    choice = input.nextInt();
+                    input.nextLine();
+                    pos = (choice == 1) ? (true) : (false);
+                    System.out.print("How many cents?:");
+                    while (!input.hasNextInt()) {
+                        System.out.print("Please enter a dollar amount in cents " +
+                                "(Ex: $20.58 as '2058'):");
+                        input.next();
+                    }
+                    transactionCents = input.nextInt();
+                    input.nextLine();
+                    mainReg.manualTransaction(pos, transactionCents);
+                    String action = (pos) ? ("added to") : ("removed from");
+                    System.out.println(transactionCents + " cents were " + action + " the register.");
+                    System.out.print("Press Enter to dismiss:");
+                    input.nextLine();
                     break;
+
                 case 9:
                     break;
+
                 default:
                     System.out.println("Ahhh what? That wasn't an option. Try again.");
             }
@@ -75,8 +108,6 @@ public class ChangeComputation {
 
     /**
      * Prints all menu selection options to the user
-     *
-     * @return Nothing
      */
     // EXPLAIN: Static?
     private static void printMenu() {
