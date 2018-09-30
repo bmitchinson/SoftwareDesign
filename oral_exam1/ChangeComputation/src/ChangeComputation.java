@@ -11,11 +11,10 @@ import java.util.Scanner;
 public class ChangeComputation {
 
     /**
-     * Main method that runs through the menu loop, validates choice input, and
+     * Runs through the menu loop, validates choice input, and
      * initializes a new Register object for use.
      *
      * @param args Unused
-     * @return Nothing
      * @author Ben Mitchinson
      * @since Aug 25th 2018
      */
@@ -28,6 +27,8 @@ public class ChangeComputation {
         int choice = 0;
         int centsCharged;
         int centsPaid;
+        int[] unitsPaid = new int[8];
+        int[] requestedCents;
         boolean pos;
         int transactionCents;
 
@@ -35,9 +36,8 @@ public class ChangeComputation {
             mainReg.printTotals();
             printMenu();
             while (!input.hasNextInt()) {
+                input.nextLine();
                 System.out.println("Please enter an integer option.");
-                // Use input.next to get rid of extra newline, essentially a clear.
-                input.next();
                 printMenu();
             }
             choice = input.nextInt();
@@ -45,24 +45,22 @@ public class ChangeComputation {
 
             switch (choice) {
                 case 1: // Charging a customer
-                    System.out.print("How much (in cents) would you like to charge them:");
-                    while (!input.hasNextInt()) {
-                        System.out.print("Please enter a dollar amount in cents " +
-                                "(Ex: $20.58 as '2058'):");
-                        input.next();
+                    centsCharged = -1;
+                    while (centsCharged <= 0) {
+                        System.out.print("How many cents would you like to charge them:");
+                        if (!input.hasNextInt()) {
+                            input.nextLine();
+                            System.out.println("Please enter an integer value.");
+                        } else {
+                            centsCharged = input.nextInt();
+                            input.nextLine();
+                            if (centsCharged <= 0) {
+                                System.out.println("Please enter a positive dollar amount in cents " +
+                                        "(Ex: $20.58 as '2058'):");
+                            }
+                        }
                     }
-                    centsCharged = input.nextInt();
-                    input.nextLine();
-                    System.out.print("How much (in cents) did they pay?:");
-                    while (!input.hasNextInt()) {
-                        System.out.print("Please enter a dollar amount in cents " +
-                                "(Ex: $20.58 as '2058'):");
-                        input.next();
-                    }
-                    centsPaid = input.nextInt();
-                    input.nextLine();
-                    mainReg.chargeCustomer(centsCharged, centsPaid);
-                    input.nextLine();
+                    mainReg.chargeCustomer(centsCharged);
                     break;
 
                 case 2: // Adding a manual transaction to the register
@@ -70,27 +68,22 @@ public class ChangeComputation {
                     System.out.println("Would you like to add a...");
                     System.out.println("1.) Positive transaction");
                     System.out.println("2.) Negative transaction");
-                    System.out.print("Choice:");
-                    while (choice != 1 && choice != 2 && !input.hasNextInt()) {
-                        System.out.print("Please enter a 1 or 2:");
-                        input.next();
+                    while (choice != 1 && choice != 2) {
+                        System.out.print("Choice:");
+                        if (!input.hasNextInt()) {
+                            input.nextLine();
+                            System.out.println("Please enter 1 or 2");
+                        } else {
+                            choice = input.nextInt();
+                            input.nextLine();
+                            if (choice != 1 && choice != 2) {
+                                System.out.println("Please enter 1 or 2");
+                            }
+                        }
                     }
-                    choice = input.nextInt();
-                    input.nextLine();
-                    pos = (choice == 1) ? (true) : (false);
-                    System.out.print("How many cents?:");
-                    while (!input.hasNextInt()) {
-                        System.out.print("Please enter a dollar amount in cents " +
-                                "(Ex: $20.58 as '2058'):");
-                        input.next();
-                    }
-                    transactionCents = input.nextInt();
-                    input.nextLine();
-                    mainReg.manualTransaction(pos, transactionCents);
-                    String action = (pos) ? ("added to") : ("removed from");
-                    System.out.println(transactionCents + " cents were " + action + " the register.");
-                    System.out.print("Press Enter to dismiss:");
-                    input.nextLine();
+                    pos = (choice == 1);
+                    requestedCents = mainReg.askForCents();
+                    mainReg.manualTransaction(pos, requestedCents);
                     break;
 
                 case 9:
@@ -109,10 +102,9 @@ public class ChangeComputation {
     /**
      * Prints all menu selection options to the user
      */
-    // EXPLAIN: Static?
     private static void printMenu() {
         System.out.println("\nOptions:\n*****************************");
-        System.out.println("1.) Charge Customer for an Item");
+        System.out.println("1.) Charge customer for an item");
         System.out.println("2.) Manually add a transaction");
         System.out.print("9.) Exit\n\n");
         System.out.print("Choice:");
