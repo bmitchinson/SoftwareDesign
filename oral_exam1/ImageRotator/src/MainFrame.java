@@ -1,6 +1,4 @@
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.io.IOException;
 
@@ -8,7 +6,6 @@ public class MainFrame extends JFrame{
 
     private ImageComponent imageComponent = new ImageComponent("/img/r.png");
     private Controls controls = new Controls(imageComponent);
-    public String test = "Testing 123";
 
     public MainFrame() throws IOException {
         super("Image Rotator");
@@ -21,9 +18,6 @@ public class MainFrame extends JFrame{
         add(controls);
     }
 
-    public String getTest() {
-        return test;
-    }
 }
 
 

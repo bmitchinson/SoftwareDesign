@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.awt.geom.AffineTransform;
 
 public class ImageComponent extends JPanel {
-    BufferedImage photo;
-    AffineTransform at = new AffineTransform();
-    double angle = 0;
+    private BufferedImage photo;
+    private AffineTransform at = new AffineTransform();
+    private double angle = 45;
 
     public ImageComponent(String url) throws IOException {
         photo = ImageIO.read(ImageComponent.class.getResource
@@ -24,7 +24,7 @@ public class ImageComponent extends JPanel {
         g2d.drawImage(photo, at, this);
     }
 
-    protected void rotate(double angle){
+    public void rotate(double angle){
         this.angle = angle;
         at = at.getRotateInstance(Math.toRadians(this.angle),150,150);
         repaint();

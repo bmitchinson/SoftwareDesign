@@ -9,24 +9,23 @@ import java.awt.event.ItemListener;
 
 public class Controls extends JPanel {
 
-    JCheckBox continuous;
-    JSlider speedSelect;
-    JSlider angleSelect;
+    private JCheckBox continuous;
+    private JSlider speedSelect;
+    private JSlider angleSelect;
 
-    Timer timer;
+    private Timer timer;
 
-    Font controlFont = new Font("Courier", Font.BOLD + Font.ITALIC, 16);
-    Font headingFont = new Font("Courier", Font.BOLD + Font.ITALIC, 20);
+    private Font controlFont = new Font("Courier", Font.BOLD + Font.ITALIC, 16);
+    private Font headingFont = new Font("Courier", Font.BOLD + Font.ITALIC, 20);
 
-    JLabel speedLabel = new FontJLabel(controlFont, "% Speed Selection", JLabel.CENTER);
-    JLabel angleLabel = new FontJLabel(controlFont, "Degree of Rotation", JLabel.CENTER);
-    JLabel heading = new FontJLabel(headingFont, "Ben's Image Rotator", JLabel.CENTER);
+    private JLabel speedLabel = new FontJLabel(controlFont, "% Speed Selection", JLabel.CENTER);
+    private JLabel angleLabel = new FontJLabel(controlFont, "Degree of Rotation", JLabel.CENTER);
+    private JLabel heading = new FontJLabel(headingFont, "Ben's Image Rotator", JLabel.CENTER);
 
     public Controls(ImageComponent imageComponent) {
         super();
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setPreferredSize(new Dimension(350, 300));
-        //setBorder(BorderFactory.createLineBorder(Color.black));
 
         speedSelect = new JSlider(0, 100, 50);
         speedSelect.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -65,7 +64,7 @@ public class Controls extends JPanel {
     }
 
     class specificAngleChangeListener implements ChangeListener {
-        ImageComponent imageComponent;
+        private ImageComponent imageComponent;
 
         public specificAngleChangeListener(ImageComponent imageComponent){
             this.imageComponent = imageComponent;
@@ -83,9 +82,9 @@ public class Controls extends JPanel {
     }
 
     class SpinModeItemListener implements ItemListener {
-        ImageComponent imageComponent;
-        JSlider speedSelect;
-        Timer timer;
+        private ImageComponent imageComponent;
+        private JSlider speedSelect;
+        private Timer timer;
 
         public SpinModeItemListener(ImageComponent imageComponent,
                                     JSlider speedSelect, Timer timer){
