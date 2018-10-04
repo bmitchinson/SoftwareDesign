@@ -1,0 +1,76 @@
+RequestInheritance.GetVideoRequest@27c170f0
+UUID: ea81d8f2-c283-4d64-ad32-b8c21d3c3ceb
+Universal Resource Locator (URL): localhost:6373
+Video: Pythonistas Pythoning with Pythons
+By: Markus
+
+RequestInheritance.GetFileRequest@5451c3a8
+UUID: 06fcd9c6-29cb-43b1-ab00-48ef3900eb28
+Universal Resource Locator (URL): file:///Users/cie_student/question.txt
+File Path: /Users/cie_student/question
+File Type: txt
+
+RequestInheritance.PostEncryptedPaymentRequest@2626b418
+UUID: f023e014-2d84-4146-8508-7b4bf5cd5c15
+Post request to server with IP address: 184.5.247.153
+Payment Data
+Payment sender: Diego
+Payment amount: $7795
+Payment receiver: Tina
+This payment was encrypted using: One Time Pad
+
+RequestInheritance.PostPaymentRequest@5a07e868
+UUID: 49ccef08-ab0f-41f8-81bc-d01e267bb018
+Post request to server with IP address: 253.10.29.37
+Payment Data
+Payment sender: Guadalupe
+Payment amount: $6375
+Payment receiver: Michael
+
+RequestInheritance.PostEncryptedFormRequest@76ed5528
+UUID: dbae9f62-880d-4b2a-8c7b-4c6a370a8775
+Post request to server with IP address: 85.41.15.246
+Form Data
+Label: Favorite color
+Value: orange
+Label: Favorite encryption scheme
+Value: Diffie-Hellman
+Label: Name
+Value: Alex
+This form was encrypted using: Vigenere
+
+RequestInheritance.PostFormRequest@2c7b84de
+UUID: 8eb85c91-af33-4a60-8b22-febe3be5ff58
+Post request to server with IP address: 130.133.4.238
+Form Data
+Label: Favorite color
+Value: green
+Label: Favorite encryption scheme
+Value: One Time Pad
+Label: Name
+Value: Tom
+
+
+RequestInheritance.PostRequest@3fee733d
+UUID: 8285d9e8-bb75-4c6a-b315-96d9f3e41256
+Post request to server with IP address: 163.221.255.79
+
+RequestInheritance.GetRequest@5acf9800
+UUID: 26d00be0-beda-4264-a8e7-91138dc1e0be
+Universal Resource Locator (URL): localhost:9954
+
+RequestInheritance.Request@4617c264
+UUID: da86433b-fd5c-4cf2-bdd0-388a644f809d
+
+Server summary:
+Total Requests: 9
+Get Requests: 3
+Post Requests: 5
+Post Form Requests: 2
+Post Encrypted Form Requests: 1
+Post Payment Requests: 2
+Post Encrypted Payment Requests: 1
+Get File Requests: 1
+Get Video Requests: 1
+
+Process finished with exit code 0

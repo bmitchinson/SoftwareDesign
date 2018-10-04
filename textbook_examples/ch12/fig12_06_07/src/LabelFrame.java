@@ -14,21 +14,21 @@ public class LabelFrame extends JFrame {
         super("Testing JLabel");
         setLayout(new FlowLayout()); // set frame layout
 
-        // JLabel constructor with a string argument
+        // JLabel constructor with a string ar  gument
         label1 = new JLabel("Label with text");
         label1.setToolTipText("This is label1");
         add(label1); // add label1 to JFrame
 
         // JLabel constructor with string, Icon and alignment arguments
-        Icon bug = new ImageIcon(getClass().getResource("bug1.png"));
-        label2 = new JLabel("Label with text and icon", bug,
+        //Icon bug = new ImageIcon(getClass().getResource("textbook_examples/ch12/fig12_06_07/bug1.png"));
+        label2 = new JLabel("Label with text and icon",
                 SwingConstants.LEFT);
         label2.setToolTipText("This is label2");
         add(label2); // add label2 to JFrame
 
         label3 = new JLabel(); // JLabel constructor no arguments
         label3.setText("Label with icon and text at bottom");
-        label3.setIcon(bug); // add icon to JLabel
+        //label3.setIcon(bug); // add icon to JLabel
         label3.setHorizontalTextPosition(SwingConstants.CENTER);
         label3.setVerticalTextPosition(SwingConstants.BOTTOM);
         label3.setToolTipText("This is label3");
