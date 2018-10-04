@@ -15,8 +15,6 @@ public class ChangeComputation {
      * initializes a new Register object for use.
      *
      * @param args Unused
-     * @author Ben Mitchinson
-     * @since Aug 25th 2018
      */
     public static void main(String args[]) {
         System.out.println("\nWelcome to Ben's SWD Register" +
