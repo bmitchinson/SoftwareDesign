@@ -14,7 +14,7 @@ public class GetRequest extends Request {
 
     @Override
     public String toString(){
-        return super.toString();
+        return super.toString() + "\nUniversal Resource Locator (URL): " + url;
     }
 
     public static int count(){

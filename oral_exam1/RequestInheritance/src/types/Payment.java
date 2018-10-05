@@ -9,4 +9,12 @@ public class Payment {
         this.amount = amount;
         this.receiver = receiver;
     }
+
+    @Override
+    public String toString(){
+        String output = "Payment Data\n";
+        output += "Payment sender: " + sender + "\nPayment amount: $" + amount
+                + "\nPayment receiver: " + receiver;
+        return output;
+    }
 }

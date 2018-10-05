@@ -32,7 +32,8 @@ public class Request {
 
     @Override
     public String toString(){
-        return memoryTitle;
+        return memoryTitle + "\nUUID: "
+                + requestUUID.toString();
     }
 
 

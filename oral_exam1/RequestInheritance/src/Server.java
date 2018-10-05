@@ -2,7 +2,7 @@ import java.util.Random;
 import java.util.Stack;
 
 public class Server {
-    private static final Integer NUM_REQ_TYPES = 2;
+    private static final Integer NUM_REQ_TYPES = 9;
 
     public static void main(String argv[]) {
         Stack<Request> requestStack = new Stack<>();
@@ -20,7 +20,7 @@ public class Server {
                 case 1:
                     requestStack.push(new GetRequest(data.getRandUUID(), data.getRandURL()));
                     break;
-                /*case 2:
+                case 2:
                     requestStack.push(new PostRequest(data.getRandUUID(), data.getRandIP()));
                     break;
                 case 3:
@@ -40,7 +40,7 @@ public class Server {
                     break;
                 case 8:
                     requestStack.push(new GetVideoRequest(data.getRandUUID(), data.getRandVideo()));
-                    break;*/
+                    break;
                 default:
                     System.out.println("\n\n\nERROR: RANDOM GENERATOR FAILED\n\n\n");
             }
@@ -57,12 +57,12 @@ public class Server {
         System.out.println("Server summary:");
         System.out.println("Total Requests: " + Request.count());
         System.out.println("Get Requests: " + GetRequest.count());
-        /*System.out.println("Post Requests: " + PostRequest.count());
+        System.out.println("Post Requests: " + PostRequest.count());
         System.out.println("Post Form Requests: " + PostFormRequest.count());
         System.out.println("Post Encrypted Form Requests: " + PostEncryptedFormRequest.count());
         System.out.println("Post Payment Requests: " + PostPaymentRequest.count());
         System.out.println("Post Encrypted Payment Requests: " + PostEncryptedPaymentRequest.count());
         System.out.println("Get File Requests: " + GetFileRequest.count());
-        System.out.println("Get Video Requests: " + GetVideoRequest.count());*/
+        System.out.println("Get Video Requests: " + GetVideoRequest.count());
     }
 }
