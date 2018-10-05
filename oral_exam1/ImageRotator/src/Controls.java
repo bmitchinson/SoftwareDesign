@@ -21,7 +21,6 @@ import java.awt.event.ItemListener;
  * @see Timer
  * @see TimerListener
  * @see #Controls(ImageComponent)
- *
  */
 public class Controls extends JPanel {
 
@@ -39,14 +38,21 @@ public class Controls extends JPanel {
     private JLabel heading = new FontJLabel(headingFont, "Ben's Image Rotator", JLabel.CENTER);
 
     /**
-     * The controls constructor configures the {@code speedSelect} and
-     * {@code angleSelect} JSliders as well as the {@code continuous} checkbox.
-     * A timer is then instantiated, and all interaction objects are assigned
-     * the proper listeners. The components default
+     * The controls constructor configures the speedSelect and
+     * angleSelect JSliders as well as the continuous checkbox.
+     * A timer is then instantiated, and interaction objects are assigned
+     * their proper listeners. Each JComponent is then added to the Controls
+     * component, with proper spacing in-between using Box objects. The application
+     * defaults to launching in continuous mode, so the timer is started.
      *
      * @param imageComponent the instance of the imageComponent created in MainFrame
      *                       is passed in so that handlers may interact with the
      *                       instance.
+     * @see ImageComponent
+     * @see Timer
+     * @see SpecificAngleChangeListener
+     * @see SpinModeItemListener
+     * @see TimerListener
      */
     public Controls(ImageComponent imageComponent) {
         super();
@@ -76,36 +82,63 @@ public class Controls extends JPanel {
 
         angleSelect.addChangeListener(new SpecificAngleChangeListener(imageComponent, continuous));
         continuous.addItemListener(new SpinModeItemListener(speedSelect, timer));
-        speedSelect.addChangeListener(new SpecificAngleChangeListener(imageComponent, continuous));
 
-
-        add(Box.createRigidArea(new Dimension(0,10)));
+        add(Box.createRigidArea(new Dimension(0, 10)));
         add(heading);
-        add(Box.createRigidArea(new Dimension(0,30)));
+        add(Box.createRigidArea(new Dimension(0, 30)));
         add(continuous);
-        add(Box.createRigidArea(new Dimension(0,10)));
+        add(Box.createRigidArea(new Dimension(0, 10)));
         add(speedLabel);
-        add(Box.createRigidArea(new Dimension(0,10)));
+        add(Box.createRigidArea(new Dimension(0, 10)));
         add(speedSelect);
-        add(Box.createRigidArea(new Dimension(0,10)));
+        add(Box.createRigidArea(new Dimension(0, 10)));
         add(angleLabel);
-        add(Box.createRigidArea(new Dimension(0,10)));
+        add(Box.createRigidArea(new Dimension(0, 10)));
         add(angleSelect);
 
         timer.start();
 
     }
 
+    /**
+     * The SpecificAngleChangeListener class implements ChangeListener, and
+     * takes an instance of ImageComponent and JCheckBox in order to call
+     * ImageComponent's rotate method when necessary. It is assigned to the
+     * angleSelect JSlider in Controls.
+     *
+     * @see Controls
+     * @see ChangeListener
+     * @see ImageComponent
+     * @see JCheckBox
+     */
     class SpecificAngleChangeListener implements ChangeListener {
         private ImageComponent imageComponent;
         private JCheckBox continuous;
 
+        /**
+         * Stores ImageComponent and JSlider references to the class for later
+         * manipulation detailed in stateChanged.
+         *
+         * @param imageComponent Instance of ImageComponent for referencing it's
+         *                       rotate method.
+         * @param continuous     Instance of the JCheckBox "Spin Mode" to disable when
+         *                       angle is changed.
+         * @see #stateChanged(ChangeEvent)
+         */
         public SpecificAngleChangeListener(ImageComponent imageComponent,
                                            JCheckBox continuous) {
             this.imageComponent = imageComponent;
             this.continuous = continuous;
         }
 
+        /**
+         * Called by JSlider when a ChangeAction is triggered. Disables continuous
+         * mode, and triggers a rotation to the proper angle.
+         *
+         * @param e event given by the event handler from JSlider.
+         * @see ChangeEvent
+         * @see ChangeListener
+         */
         public void stateChanged(ChangeEvent e) {
             JSlider source = (JSlider) e.getSource();
 
@@ -117,15 +150,45 @@ public class Controls extends JPanel {
         }
     }
 
+    /**
+     * The SpinModeItemListener class implements ItemListener, and takes an
+     * instance of JSlider and Timer for manipulation detailed in itemStateChanged.
+     * It is assigned as a listener for the JCheckBox named continuous in Controls.
+     *
+     * @see Controls
+     * @see ItemListener
+     * @see Timer
+     * @see JSlider
+     * @see #itemStateChanged(ItemEvent)
+     */
     class SpinModeItemListener implements ItemListener {
         private JSlider speedSelect;
         private Timer timer;
 
+        /**
+         * Stores speedSelect and timer references to the class for  manipulation
+         * detailed in itemStateChanged.
+         *
+         * @param speedSelect Instance of JSlider for referencing it's current
+         *                    value representing speed.
+         * @param timer       Instance of the Timer that is triggering constant rotation
+         *                    of the image.
+         * @see #itemStateChanged(ItemEvent)
+         */
         public SpinModeItemListener(JSlider speedSelect, Timer timer) {
             this.speedSelect = speedSelect;
             this.timer = timer;
         }
 
+        /**
+         * Called by JCheckBox when a ItemAction is triggered from the handler.
+         * Starts and stops the timer as needed, while disabling the speedSelect
+         * to make clear to the user that it is not functional.
+         *
+         * @param e event given by the event handler from JCheckBox
+         * @see ItemListener
+         * @see ItemEvent
+         */
         public void itemStateChanged(ItemEvent e) {
             JCheckBox source = (JCheckBox) e.getSource();
 
@@ -139,15 +202,47 @@ public class Controls extends JPanel {
         }
     }
 
+    /**
+     * The TimeListener class implements ActionListener and takes an instance
+     * of both ImageComponent and JSlider for manipulation detailed in
+     * actionPerformed. Is it assigned as a listener for the Timer named timer
+     * in Controls.
+     *
+     * @see #actionPerformed(ActionEvent)
+     * @see ActionListener
+     * @see Controls
+     * @see TimerListener
+     */
     class TimerListener implements ActionListener {
         private ImageComponent imageComponent;
         private JSlider speedSelect;
 
+        /**
+         * Stores imageComponent and speedSelect references for manipulation in
+         * actionPerformed.
+         *
+         * @see #actionPerformed(ActionEvent)
+         *
+         * @param imageComponent reference to the imageComponent stored originally
+         *                       in MainFrame for manipulation.
+         * @param speedSelect reference to the JSlider speedSelect object in Controls
+         *                    in order to check slider value.
+         */
         public TimerListener(ImageComponent imageComponent, JSlider speedSelect) {
             this.imageComponent = imageComponent;
             this.speedSelect = speedSelect;
         }
 
+        /**
+         * Called by Timer when an ActionEvent is triggered from the handler.
+         * Calls the andAngle method from ImageComponent with a parameter adjusted
+         * by the value in the speedSelect reference.
+         *
+         * @see Timer
+         * @see ImageComponent
+         * @see ActionEvent
+         * @param e event given by the event handler from Timer
+         */
         public void actionPerformed(ActionEvent e) {
             this.imageComponent.addAngle(speedSelect.getValue() / 2);
         }

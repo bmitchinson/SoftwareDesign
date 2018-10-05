@@ -1,3 +1,8 @@
+import types.File;
+import types.Form;
+import types.Payment;
+import types.Video;
+
 import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;

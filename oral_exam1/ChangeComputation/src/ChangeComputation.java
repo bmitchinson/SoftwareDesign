@@ -22,6 +22,8 @@ public class ChangeComputation {
         Register mainReg = new Register();
         Scanner input = new Scanner(System.in);
 
+        System.out.println("Code:"+mainReg.toString());
+
         int choice = 0;
         int centsCharged;
         int centsPaid;

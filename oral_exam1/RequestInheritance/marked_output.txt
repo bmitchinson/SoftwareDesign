@@ -79,12 +79,12 @@ Post Requests: 5 (1)
 (Total 9)
 
 Post Form Requests: 2
-Post Encrypted Form Requests: 1
+* Post Encrypted Form Requests: 1
+
 Post Payment Requests: 2
-Post Encrypted Payment Requests: 1
+* Post Encrypted Payment Requests: 1
+
 Get File Requests: 1 (1)
 Get Video Requests: 1 (2)
-
-(Reg 1)
 
 Process finished with exit code 0

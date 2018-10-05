@@ -25,12 +25,12 @@ public class ImageComponent extends JPanel {
      * The ImageComponent constructor reads in an image using the provided uri,
      * then sets a border around the panel and sets a fixed dimension.
      *
-     * @param uri Relative image file address, hardcoded in MainFrame to be
+     * @param url Relative image file address, hardcoded in MainFrame to be
      *            "h.png" from the included img package.
      */
-    public ImageComponent(String uri) {
+    public ImageComponent(String url) {
         try {
-            photo = ImageIO.read(ImageComponent.class.getResource(uri));
+            photo = ImageIO.read(ImageComponent.class.getResource(url));
         } catch (IOException e) {
             e.printStackTrace();
         }
