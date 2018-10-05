@@ -8,6 +8,7 @@ public class Video {
 
     /**
      * The constructor acts as an initial setter for vidUrl, vidTitle, and vidAuthor
+     *
      * @param vidUrl a String that holds the url of the video
      * @param vidTitle a String that holds the title of the video
      * @param vidAuthor a String that holds the author of the video

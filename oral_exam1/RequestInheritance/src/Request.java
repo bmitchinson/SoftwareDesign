@@ -7,7 +7,6 @@ import java.util.UUID;
  *
  * @author Ben Mitchinson
  * @see UUID
- * @since October 4th, 2018
  */
 public class Request {
 
@@ -26,6 +25,11 @@ public class Request {
         this.requestUUID = requestUUID;
     }
 
+    /**
+     * getter for the static count of Request objects currently instantiated
+     *
+     * @return request instance count
+     */
     public static int count(){
         return requestCount;
     }
