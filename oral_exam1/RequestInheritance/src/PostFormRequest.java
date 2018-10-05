@@ -3,7 +3,7 @@ import types.Form;
 import java.util.UUID;
 
 public class PostFormRequest extends PostRequest {
-    Form form;
+    private Form form;
     static private int postFormRequestCount;
 
     public PostFormRequest(UUID uuid, String ip, Form form) {

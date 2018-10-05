@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public class PostEncryptedPaymentRequest extends PostPaymentRequest{
 
-    String encryption;
+    private String encryption;
     static private int postEncryptedPaymentRequestCount;
 
     public PostEncryptedPaymentRequest(UUID uuid, String ip, Payment payment, String encryption) {

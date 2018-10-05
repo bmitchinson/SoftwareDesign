@@ -7,6 +7,11 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
 
+/**
+ * Class to manage the generation of proper inputs needed by the request classes.
+ *
+ * @author Alex Powers
+ */
 class DataGenerator {
     // fields to hold example data
     private Random rand;
@@ -17,6 +22,9 @@ class DataGenerator {
     private String[] fileTypes;
     private String[] colors;
 
+    /**
+     * Initialize options for request data.
+     */
     // Constructor
     DataGenerator() {
         // initialize with example data

@@ -5,7 +5,7 @@ import java.util.UUID;
 public class GetVideoRequest extends GetRequest{
 
     private Video video;
-    public static int getVideoRequestCount;
+    private static int getVideoRequestCount;
 
     public GetVideoRequest(UUID requestUUID, Video video) {
         super(requestUUID, video.getVidUrl());

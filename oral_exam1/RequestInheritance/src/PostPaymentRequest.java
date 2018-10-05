@@ -5,7 +5,7 @@ import java.util.UUID;
 public class PostPaymentRequest extends PostRequest {
 
     private Payment payment;
-    public static int postPaymentRequestCount;
+    private static int postPaymentRequestCount;
 
     public PostPaymentRequest(UUID requestUUID, String ip, Payment payment) {
         super(requestUUID, ip);

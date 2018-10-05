@@ -3,7 +3,7 @@ import types.Form;
 import java.util.UUID;
 
 public class PostEncryptedFormRequest extends PostFormRequest {
-    String encryption;
+    private String encryption;
     static private int postEncryptedFormRequestCount;
 
     public PostEncryptedFormRequest(UUID uuid, String ip, Form form, String encryption) {

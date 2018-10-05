@@ -5,7 +5,7 @@ import java.util.UUID;
 public class GetFileRequest extends GetRequest{
 
     private File file;
-    public static int getFileRequestCount;
+    private static int getFileRequestCount;
 
     public GetFileRequest(UUID requestUUID, File file) {
         super(requestUUID, "file:///"+file.getFilePath()+'.'+file.getFileType());
