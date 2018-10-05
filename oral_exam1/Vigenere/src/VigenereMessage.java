@@ -1,3 +1,7 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
 /**
  * The VigenereMessage class holds a message and it's state (encrypted / decrypted),
  * and provides methods to the user to change it's state using the key located in
@@ -8,13 +12,31 @@ public class VigenereMessage {
     private String message;
     private boolean messageIsEncrypted;
 
+    /**
+     * Initialize the VigenereMessage object with a message, and set it to
+     * unencrypted by default.
+     *
+     * @param message The message to later encrypt / decrypt in main.
+     * @see Vigenere
+     */
     public VigenereMessage(String message){
         this.message = message;
         this.messageIsEncrypted = false;
     }
 
+    /**
+     * Encrypt the local message using the string key stored in key.txt
+     */
     public void encrypt(){
-        String key = "abc"; // TODO: Read key from file instead
+        File inputFile = new File("oral_exam1/Vigenere/key.txt");
+        String key = null;
+        try {
+            Scanner inputFileScanner = new Scanner(inputFile);
+            key = inputFileScanner.nextLine();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
         char[] newMessage = new char[message.length()];
         int i=0;
         for(char letter : message.toCharArray()){
@@ -34,8 +56,19 @@ public class VigenereMessage {
         System.out.println(toString());
     }
 
+    /**
+     * Decrypt the currently encrypted message using the string key value stored
+     * in key.txt
+     */
     public void decrypt(){
-        String key = "abc"; // TODO: Read key from file
+        File inputFile = new File("oral_exam1/Vigenere/key.txt");
+        String key = null;
+        try {
+            Scanner inputFileScanner = new Scanner(inputFile);
+            key = inputFileScanner.nextLine();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
         char[] newMessage = new char[message.length()];
         int i=0;
@@ -62,6 +95,11 @@ public class VigenereMessage {
         System.out.println(toString());
     }
 
+    /**
+     * Getter for local message
+     *
+     * @return
+     */
     public String getMessage(){
         return message;
     }
