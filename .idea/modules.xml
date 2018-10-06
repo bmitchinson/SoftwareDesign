@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/oral_exam1/ArabicToRoman/ArabicToRoman.iml" filepath="$PROJECT_DIR$/oral_exam1/ArabicToRoman/ArabicToRoman.iml" />
-      <module fileurl="file://$PROJECT_DIR$/oral_exam1/ChangeComputation/ChangeComputation.iml" filepath="$PROJECT_DIR$/oral_exam1/ChangeComputation/ChangeComputation.iml" />
       <module fileurl="file://$PROJECT_DIR$/oral_exam1/ComputusMedium/ComputusMedium.iml" filepath="$PROJECT_DIR$/oral_exam1/ComputusMedium/ComputusMedium.iml" />
       <module fileurl="file://$PROJECT_DIR$/textbook_examples/MVCCalculatorExamples/EXAMPLE_MVCCalculator1/EXAMPLE_MVCCalculator1.iml" filepath="$PROJECT_DIR$/textbook_examples/MVCCalculatorExamples/EXAMPLE_MVCCalculator1/EXAMPLE_MVCCalculator1.iml" />
       <module fileurl="file://$PROJECT_DIR$/textbook_examples/MVCCalculatorExamples/EXAMPLE_MVCCalculator2/EXAMPLE_MVCCalculator2.iml" filepath="$PROJECT_DIR$/textbook_examples/MVCCalculatorExamples/EXAMPLE_MVCCalculator2/EXAMPLE_MVCCalculator2.iml" />
@@ -56,16 +54,18 @@
       <module fileurl="file://$PROJECT_DIR$/textbook_examples/appI/FigI_24/FigI_24.iml" filepath="$PROJECT_DIR$/textbook_examples/appI/FigI_24/FigI_24.iml" />
       <module fileurl="file://$PROJECT_DIR$/textbook_examples/supplemental/HelloTemp/HelloTemp.iml" filepath="$PROJECT_DIR$/textbook_examples/supplemental/HelloTemp/HelloTemp.iml" />
       <module fileurl="file://$PROJECT_DIR$/textbook_examples/supplemental/HelloWorld/HelloWorld.iml" filepath="$PROJECT_DIR$/textbook_examples/supplemental/HelloWorld/HelloWorld.iml" />
-      <module fileurl="file://$PROJECT_DIR$/oral_exam1/ImageRotator/ImageRotator.iml" filepath="$PROJECT_DIR$/oral_exam1/ImageRotator/ImageRotator.iml" />
       <module fileurl="file://$PROJECT_DIR$/quizzes/JUnit/JUnit.iml" filepath="$PROJECT_DIR$/quizzes/JUnit/JUnit.iml" />
       <module fileurl="file://$PROJECT_DIR$/textbook_examples/MVCCalculatorExamples/MVCCalculatorExamples.iml" filepath="$PROJECT_DIR$/textbook_examples/MVCCalculatorExamples/MVCCalculatorExamples.iml" />
       <module fileurl="file://$PROJECT_DIR$/textbook_examples/supplemental/Myfig2-6/Myfig2-6.iml" filepath="$PROJECT_DIR$/textbook_examples/supplemental/Myfig2-6/Myfig2-6.iml" />
-      <module fileurl="file://$PROJECT_DIR$/oral_exam1/RequestInheritance/RequestInheritance.iml" filepath="$PROJECT_DIR$/oral_exam1/RequestInheritance/RequestInheritance.iml" />
+      <module fileurl="file://$PROJECT_DIR$/oral_exam1/S21_HangmanGUI_Easy/S21_HangmanGUI_Easy.iml" filepath="$PROJECT_DIR$/oral_exam1/S21_HangmanGUI_Easy/S21_HangmanGUI_Easy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/oral_exam1/S22_ImageRotator_Hard/S22_ImageRotator_Hard.iml" filepath="$PROJECT_DIR$/oral_exam1/S22_ImageRotator_Hard/S22_ImageRotator_Hard.iml" />
+      <module fileurl="file://$PROJECT_DIR$/oral_exam1/S28_Vigenere_Medium/S28_Vigenere_Medium.iml" filepath="$PROJECT_DIR$/oral_exam1/S28_Vigenere_Medium/S28_Vigenere_Medium.iml" />
+      <module fileurl="file://$PROJECT_DIR$/oral_exam1/S31_RequestInheritance_Medium/S31_RequestInheritance_Medium.iml" filepath="$PROJECT_DIR$/oral_exam1/S31_RequestInheritance_Medium/S31_RequestInheritance_Medium.iml" />
+      <module fileurl="file://$PROJECT_DIR$/oral_exam1/S4_ChangeComputation_Medium/S4_ChangeComputation_Medium.iml" filepath="$PROJECT_DIR$/oral_exam1/S4_ChangeComputation_Medium/S4_ChangeComputation_Medium.iml" />
       <module fileurl="file://$PROJECT_DIR$/textbook_examples/ch15/SerializationApps/SerializationApps.iml" filepath="$PROJECT_DIR$/textbook_examples/ch15/SerializationApps/SerializationApps.iml" />
       <module fileurl="file://$PROJECT_DIR$/textbook_examples/supplemental/SupermarketSimulation/SupermarketSimulation.iml" filepath="$PROJECT_DIR$/textbook_examples/supplemental/SupermarketSimulation/SupermarketSimulation.iml" />
       <module fileurl="file://$PROJECT_DIR$/textbook_examples/ch15/TextFileApps/TextFileApps.iml" filepath="$PROJECT_DIR$/textbook_examples/ch15/TextFileApps/TextFileApps.iml" />
       <module fileurl="file://$PROJECT_DIR$/textbook_examples/ch25/TipCalculator/TipCalculator.iml" filepath="$PROJECT_DIR$/textbook_examples/ch25/TipCalculator/TipCalculator.iml" />
-      <module fileurl="file://$PROJECT_DIR$/oral_exam1/Vigenere/Vigenere.iml" filepath="$PROJECT_DIR$/oral_exam1/Vigenere/Vigenere.iml" />
       <module fileurl="file://$PROJECT_DIR$/textbook_examples/ch25/Welcome/Welcome.iml" filepath="$PROJECT_DIR$/textbook_examples/ch25/Welcome/Welcome.iml" />
       <module fileurl="file://$PROJECT_DIR$/textbook_examples/supplemental/WelcomeApp/WelcomeApp.iml" filepath="$PROJECT_DIR$/textbook_examples/supplemental/WelcomeApp/WelcomeApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/textbook_examples/ch24/addressbook_example/addressbook_example.iml" filepath="$PROJECT_DIR$/textbook_examples/ch24/addressbook_example/addressbook_example.iml" />
