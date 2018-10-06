@@ -6,6 +6,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.security.SecureRandom;
 
+/**
+ * HangmanGame is the main JFrame for the game that shows all progress to the user
+ */
 public class HangmanGame extends JFrame {
     private SecureRandom randomGen = new SecureRandom();
 

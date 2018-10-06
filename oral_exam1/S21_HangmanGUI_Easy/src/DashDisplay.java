@@ -1,6 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Dash Display is a JPanel that shows the user current progress made towards
+ * guessing the word
+ */
 public class DashDisplay extends JPanel {
 
     Font letterFont = new Font("Courier", Font.BOLD, 45);
