@@ -19,8 +19,8 @@ public class PostPaymentRequest extends PostRequest {
      * stored locally.
      *
      * @param requestUUID id to be passed to the PostRequest constructor
-     * @param ip ip address to be passed to the PostRequest constructor
-     * @param payment internalize a payment object to represent survey results
+     * @param ip          ip address to be passed to the PostRequest constructor
+     * @param payment     internalize a payment object to represent survey results
      */
     public PostPaymentRequest(UUID requestUUID, String ip, Payment payment) {
         super(requestUUID, ip);
@@ -29,7 +29,7 @@ public class PostPaymentRequest extends PostRequest {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return super.toString() + "\n" + payment.toString();
     }
 
@@ -38,7 +38,7 @@ public class PostPaymentRequest extends PostRequest {
      *
      * @return count of PostPaymentRequest objects currently instantiated
      */
-    public static int count(){
+    public static int count() {
         return postPaymentRequestCount;
     }
 }

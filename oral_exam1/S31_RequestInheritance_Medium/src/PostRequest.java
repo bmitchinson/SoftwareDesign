@@ -15,7 +15,7 @@ public class PostRequest extends Request {
      * A constructor to act as a setter for requestUUID and ip.
      *
      * @param requestUUID a UUID to be passed along to the constructor of Request
-     * @param ip a String representing the ip address of the post.
+     * @param ip          a String representing the ip address of the post.
      */
     public PostRequest(UUID requestUUID, String ip) {
         super(requestUUID);

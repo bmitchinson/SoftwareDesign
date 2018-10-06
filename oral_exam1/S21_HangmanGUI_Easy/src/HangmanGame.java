@@ -101,7 +101,7 @@ public class HangmanGame extends JFrame {
                         "Nope", JOptionPane.PLAIN_MESSAGE);
         letterGuess.setText("");
         wordGuess.setText("");
-        if (guessesLeft == 0){
+        if (guessesLeft == 0) {
             JOptionPane.showMessageDialog
                     (null, "You're out of guesses :(",
                             "Dummy", JOptionPane.PLAIN_MESSAGE);
@@ -110,11 +110,11 @@ public class HangmanGame extends JFrame {
 
     }
 
-    public void goodGuess(){
+    public void goodGuess() {
         JOptionPane.showMessageDialog
                 (null, "Nice Guess!",
                         "Good Job", JOptionPane.PLAIN_MESSAGE);
-        if (progress.equals(goal)){
+        if (progress.equals(goal)) {
             JOptionPane.showMessageDialog
                     (null, "You Win!",
                             "Hooray!", JOptionPane.PLAIN_MESSAGE);
@@ -122,7 +122,7 @@ public class HangmanGame extends JFrame {
         endGame();
     }
 
-    public void endGame(){
+    public void endGame() {
         wordGuess.setEnabled(false);
         letterGuess.setEnabled(false);
         dashDisplay.progressUpdate(goal);
@@ -135,24 +135,23 @@ public class HangmanGame extends JFrame {
             String letterEntry = source.getText();
             String update = "";
             boolean match = false;
-            if (goal.substring(0,1).equals(letterEntry)){
+            if (goal.substring(0, 1).equals(letterEntry)) {
                 progress = letterEntry + progress.substring(1);
                 match = true;
             }
-            if (goal.substring(1,2).equals(letterEntry)){
-                progress = progress.substring(0,1) + letterEntry +
+            if (goal.substring(1, 2).equals(letterEntry)) {
+                progress = progress.substring(0, 1) + letterEntry +
                         progress.substring(2);
                 match = true;
             }
-            if (goal.substring(2).equals(letterEntry)){
-                progress = progress.substring(0,2) + letterEntry;
+            if (goal.substring(2).equals(letterEntry)) {
+                progress = progress.substring(0, 2) + letterEntry;
                 match = true;
             }
             dashDisplay.progressUpdate(progress);
-            if (!match){
+            if (!match) {
                 badGuess();
-            }
-            else {
+            } else {
                 goodGuess();
             }
             letterGuess.setText("");

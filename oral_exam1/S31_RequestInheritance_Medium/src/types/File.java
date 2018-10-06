@@ -12,7 +12,7 @@ public class File {
      * @param filePath String that represents the path to the file
      * @param fileType String that represents the type of the file
      */
-    public File(String filePath, String fileType){
+    public File(String filePath, String fileType) {
         this.filePath = filePath;
         this.fileType = fileType;
     }
@@ -31,13 +31,13 @@ public class File {
      *
      * @return filePath
      */
-    public String getFilePath(){
+    public String getFilePath() {
         return filePath;
     }
 
 
     @Override
-    public String toString(){
+    public String toString() {
         return "\nFile Path: " + filePath + "\nFile Type: " + fileType;
     }
 }

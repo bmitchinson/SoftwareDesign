@@ -30,12 +30,12 @@ public class Request {
      *
      * @return request instance count
      */
-    public static int count(){
+    public static int count() {
         return requestCount;
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return memoryTitle + "\nUUID: "
                 + requestUUID.toString();
     }

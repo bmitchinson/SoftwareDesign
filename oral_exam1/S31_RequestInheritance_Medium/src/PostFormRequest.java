@@ -18,7 +18,7 @@ public class PostFormRequest extends PostRequest {
      * locally
      *
      * @param uuid id to be passed to the PostRequest constructor
-     * @param ip ip address to be passed to the PostRequest constructor
+     * @param ip   ip address to be passed to the PostRequest constructor
      * @param form internalize a form object to represent survey results
      */
     public PostFormRequest(UUID uuid, String ip, Form form) {
@@ -28,7 +28,7 @@ public class PostFormRequest extends PostRequest {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return super.toString() + "\n" + form.toString();
     }
 
@@ -37,7 +37,7 @@ public class PostFormRequest extends PostRequest {
      *
      * @return PostFormRequest count of PostFormRequest objects currently instantiated
      */
-    public static int count(){
+    public static int count() {
         return postFormRequestCount;
     }
 

@@ -9,7 +9,7 @@ import java.util.UUID;
  *
  * @see PostPaymentRequest
  */
-public class PostEncryptedPaymentRequest extends PostPaymentRequest{
+public class PostEncryptedPaymentRequest extends PostPaymentRequest {
 
     private String encryption;
     static private int postEncryptedPaymentRequestCount;
@@ -19,9 +19,9 @@ public class PostEncryptedPaymentRequest extends PostPaymentRequest{
      * forwarding uuid, ip and payment along to the parent constructor, while storing
      * the encryption string.
      *
-     * @param uuid unique id to represent the request
-     * @param ip address to represent request origin
-     * @param payment object to payment transaction information
+     * @param uuid       unique id to represent the request
+     * @param ip         address to represent request origin
+     * @param payment    object to payment transaction information
      * @param encryption type of encryption
      */
     public PostEncryptedPaymentRequest(UUID uuid, String ip, Payment payment, String encryption) {

@@ -36,7 +36,7 @@ public class Vigenere {
             //message.replaceAll("[\n\r]", "");
             char[] messageArray = message.toCharArray();
             for (int i = 0; i < message.length(); i++) {
-                int letter = (int)messageArray[i] - 96;
+                int letter = (int) messageArray[i] - 96;
                 if (letter <= 0 || letter > 26) {
                     i = message.length();
                     valid = false;
@@ -53,7 +53,7 @@ public class Vigenere {
         // Ask the user to enter a key value, validate it, and write it to file.
         System.out.println("What key would you like to use to encrypt your message?");
         System.out.println("(Your key will be saved in \"key.txt\")");
-        String key=null;
+        String key = null;
         valid = false;
         while (!valid) {
             System.out.println("(Please use only lowercase values of a-z and spaces.)");
@@ -62,7 +62,7 @@ public class Vigenere {
             //key.replaceAll("[\n\r]", "");
             char[] keyArray = key.toCharArray();
             for (int i = 0; i < key.length(); i++) {
-                if ((int) keyArray[i]-96 <= 0 || (int) keyArray[i]-96 > 26) {
+                if ((int) keyArray[i] - 96 <= 0 || (int) keyArray[i] - 96 > 26) {
                     valid = false;
                     i = key.length();
                 } else {

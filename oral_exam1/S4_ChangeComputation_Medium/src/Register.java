@@ -67,7 +67,8 @@ public class Register {
         input.nextLine();
     }
 
-    /** Converts a given integer as a properly formatted string.
+    /**
+     * Converts a given integer as a properly formatted string.
      *
      * @param cents integer amount of cents that a currency represents in the register.
      * @return a formatted dollar amount string as interpretation of given cents.

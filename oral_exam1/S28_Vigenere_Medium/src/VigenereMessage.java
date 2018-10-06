@@ -19,7 +19,7 @@ public class VigenereMessage {
      * @param message The message to later encrypt / decrypt in main.
      * @see Vigenere
      */
-    public VigenereMessage(String message){
+    public VigenereMessage(String message) {
         this.message = message;
         this.messageIsEncrypted = false;
     }
@@ -27,7 +27,7 @@ public class VigenereMessage {
     /**
      * Encrypt the local message using the string key stored in key.txt
      */
-    public void encrypt(){
+    public void encrypt() {
         File inputFile = new File("oral_exam1/Vigenere/key.txt");
         String key = null;
         try {
@@ -38,15 +38,14 @@ public class VigenereMessage {
         }
 
         char[] newMessage = new char[message.length()];
-        int i=0;
-        for(char letter : message.toCharArray()){
-            if (letter == ' '){
+        int i = 0;
+        for (char letter : message.toCharArray()) {
+            if (letter == ' ') {
                 newMessage[i] = ' ';
-            }
-            else{
-                int letterNum = (char)letter - 96;
-                int shift = (char)key.toCharArray()[i%key.length()]-96;
-                newMessage[i] = (char)(((letterNum + shift)%26)+96);
+            } else {
+                int letterNum = (char) letter - 96;
+                int shift = (char) key.toCharArray()[i % key.length()] - 96;
+                newMessage[i] = (char) (((letterNum + shift) % 26) + 96);
             }
             i++;
         }
@@ -60,7 +59,7 @@ public class VigenereMessage {
      * Decrypt the currently encrypted message using the string key value stored
      * in key.txt
      */
-    public void decrypt(){
+    public void decrypt() {
         File inputFile = new File("oral_exam1/Vigenere/key.txt");
         String key = null;
         try {
@@ -71,20 +70,19 @@ public class VigenereMessage {
         }
 
         char[] newMessage = new char[message.length()];
-        int i=0;
+        int i = 0;
 
-        for(char letter : message.toCharArray()){
-            if (letter == ' '){
+        for (char letter : message.toCharArray()) {
+            if (letter == ' ') {
                 newMessage[i] = ' ';
-            }
-            else{
-                int letterNum = (char)letter - 96;
-                int shift = (char)key.toCharArray()[i%key.length()]-96;
+            } else {
+                int letterNum = (char) letter - 96;
+                int shift = (char) key.toCharArray()[i % key.length()] - 96;
                 int newNum = (letterNum - shift);
-                while (newNum <= 0){
+                while (newNum <= 0) {
                     newNum += 26;
                 }
-                newMessage[i] = (char)(newNum+96);
+                newMessage[i] = (char) (newNum + 96);
             }
             i++;
         }
@@ -100,12 +98,12 @@ public class VigenereMessage {
      *
      * @return
      */
-    public String getMessage(){
+    public String getMessage() {
         return message;
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         String output = "\n";
         // File name
         output += "Vigenere Message Status:\n";
