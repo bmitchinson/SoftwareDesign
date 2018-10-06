@@ -221,12 +221,11 @@ public class Controls extends JPanel {
          * Stores imageComponent and speedSelect references for manipulation in
          * actionPerformed.
          *
-         * @see #actionPerformed(ActionEvent)
-         *
          * @param imageComponent reference to the imageComponent stored originally
          *                       in MainFrame for manipulation.
-         * @param speedSelect reference to the JSlider speedSelect object in Controls
-         *                    in order to check slider value.
+         * @param speedSelect    reference to the JSlider speedSelect object in Controls
+         *                       in order to check slider value.
+         * @see #actionPerformed(ActionEvent)
          */
         public TimerListener(ImageComponent imageComponent, JSlider speedSelect) {
             this.imageComponent = imageComponent;
@@ -238,10 +237,10 @@ public class Controls extends JPanel {
          * Calls the andAngle method from ImageComponent with a parameter adjusted
          * by the value in the speedSelect reference.
          *
+         * @param e event given by the event handler from Timer
          * @see Timer
          * @see ImageComponent
          * @see ActionEvent
-         * @param e event given by the event handler from Timer
          */
         public void actionPerformed(ActionEvent e) {
             this.imageComponent.addAngle(speedSelect.getValue() / 2);
