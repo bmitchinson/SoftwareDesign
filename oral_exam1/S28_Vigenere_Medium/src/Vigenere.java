@@ -73,7 +73,7 @@ public class Vigenere {
 
         // Write to file using PrintWriter
         try {
-            PrintWriter keyFile = new PrintWriter("oral_exam1/Vigenere/key.txt", "UTF-8");
+            PrintWriter keyFile = new PrintWriter("oral_exam1/S28_Vigenere_Medium/key.txt", "UTF-8");
             keyFile.write(key);
             keyFile.close();
         } catch (FileNotFoundException e) {

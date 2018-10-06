@@ -28,7 +28,7 @@ public class VigenereMessage {
      * Encrypt the local message using the string key stored in key.txt
      */
     public void encrypt() {
-        File inputFile = new File("oral_exam1/Vigenere/key.txt");
+        File inputFile = new File("oral_exam1/S28_Vigenere_Medium/key.txt");
         String key = null;
         try {
             Scanner inputFileScanner = new Scanner(inputFile);
@@ -60,7 +60,7 @@ public class VigenereMessage {
      * in key.txt
      */
     public void decrypt() {
-        File inputFile = new File("oral_exam1/Vigenere/key.txt");
+        File inputFile = new File("oral_exam1/S28_Vigenere_Medium/key.txt");
         String key = null;
         try {
             Scanner inputFileScanner = new Scanner(inputFile);
