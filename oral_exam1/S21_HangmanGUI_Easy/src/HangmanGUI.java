@@ -3,6 +3,7 @@ public class HangmanGUI {
     /**
      * The driver class for a game of hangman
      *
+     * @author Ben Mitchinson
      * @param args unused
      */
     public static void main(String[] args) {

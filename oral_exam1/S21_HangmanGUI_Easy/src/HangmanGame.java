@@ -7,7 +7,13 @@ import java.awt.event.KeyEvent;
 import java.security.SecureRandom;
 
 /**
- * HangmanGame is the main JFrame for the game that shows all progress to the user
+ * HangmanGame is the main JFrame for the game that shows all progress to the user.
+ * It is made up of several labels, a DashDisplay, and two text areas for the user
+ * to enter input as guesses to the game. Each game is started with randomized 3
+ * letter word, and the user has 6 guesses to attempt to win the game.
+ *
+ * @see #HangmanGame(String[])
+ * @see JFrame
  */
 public class HangmanGame extends JFrame {
     private SecureRandom randomGen = new SecureRandom();
@@ -27,6 +33,19 @@ public class HangmanGame extends JFrame {
             "Guesses Made: " + guesses
     );
 
+    /**
+     * The HangmanGame constructor initializes the labels needed to be shown on
+     * the screen with proper font and alignment. It also initializes the text areas,
+     * and assigns them an actionListener defined below, and a key listener, sometimes
+     * referred to as a "chomp" to remove any extra letters past their preset width.
+     * An instance of DashDisplay is added to the JFrame to display the user's progress.
+     * These elements are then all added to the JFrame with proper spacing in-between.
+     *
+     * @param words the three letter word for attempting to guess.
+     * @see DashDisplay
+     * @see letterGuessActionListener
+     * @see wordGuessActionListener
+     */
     public HangmanGame(String[] words) {
         super("Hangman GUI");
         setSize(600, 550);
@@ -96,6 +115,13 @@ public class HangmanGame extends JFrame {
 
     }
 
+    /**
+     * Removes a guess from how many the user has left and notifies them of their
+     * incorrect guess. If guesses hit zero, the function notifies the user that
+     * they have lost, and calls endGame() to end the game.
+     *
+     * @see #endGame()
+     */
     public void badGuess() {
         guessesLeft--;
         guessesRemaining.setText("Guesses Left: " + Integer.toString(guessesLeft));
@@ -110,9 +136,14 @@ public class HangmanGame extends JFrame {
                             "Dummy", JOptionPane.PLAIN_MESSAGE);
             endGame();
         }
-
     }
 
+    /**
+     * Notifies the user that they have made a correct guess, and if their guess
+     * happened to complete the word, notifies them of their win, and calls endGame().
+     *
+     * @see #endGame()
+     */
     public void goodGuess() {
         JOptionPane.showMessageDialog
                 (null, "Nice Guess!",
@@ -121,22 +152,38 @@ public class HangmanGame extends JFrame {
             JOptionPane.showMessageDialog
                     (null, "You Win!",
                             "Hooray!", JOptionPane.PLAIN_MESSAGE);
+            endGame();
         }
-        endGame();
     }
 
+    /**
+     * Deactivates the two text areas for guessing, and reflects the complete
+     * word within the dashDisplay by making a call to it's method progressUpdate().
+     *
+     * @see DashDisplay
+     */
     public void endGame() {
         wordGuess.setEnabled(false);
         letterGuess.setEnabled(false);
         dashDisplay.progressUpdate(goal);
     }
 
+    /**
+     * An action listener dedicated to the letterGuess text area field. It compares
+     * the letter entered to each letter in the goal string, and if a match is found,
+     * updates the users progress, makes the appropriate call to either goodGuess()
+     * or badGuess(), and updates the DashDisplay appropriately.
+     *
+     * @see DashDisplay
+     * @see #goodGuess()
+     * @see #badGuess()
+     * @see ActionListener
+     */
     class letterGuessActionListener implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
             JTextField source = (JTextField) e.getSource();
             String letterEntry = source.getText();
-            String update = "";
             boolean match = false;
             if (goal.substring(0, 1).equals(letterEntry)) {
                 progress = letterEntry + progress.substring(1);
@@ -154,6 +201,8 @@ public class HangmanGame extends JFrame {
             dashDisplay.progressUpdate(progress);
             if (!match) {
                 badGuess();
+                guesses += letterEntry;
+                guessesMade.setText("Guesses Made: " + guesses);
             } else {
                 goodGuess();
             }
@@ -162,6 +211,17 @@ public class HangmanGame extends JFrame {
         }
     }
 
+    /**
+     * The wordGuessActionListener is an ActionListener dedicated to the wordGuess
+     * text area. Upon being called through the event handler with a press of the
+     * enter key on the area, the listener compares the text in wordGuess to the
+     * goal text. If the text is a match, goodGuess() is called therefore ending
+     * the game. If the text is not a match, badGuess() is called.
+     *
+     * @see #goodGuess()
+     * @see #badGuess()
+     * @see ActionListener
+     */
     class wordGuessActionListener implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
