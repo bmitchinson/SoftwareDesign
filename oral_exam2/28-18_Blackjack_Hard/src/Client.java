@@ -16,9 +16,9 @@ public class Client extends JFrame {
     private Socket client; // socket to communicate with server
     private int clientNumber;
 
-    public Client(int clientNumber) {
-        super(Integer.toString(clientNumber));
-        this.clientNumber = clientNumber;
+    public Client() {
+        super("Player " + Integer.toString(0));
+        this.clientNumber = 0;
 
         dealerAddress = "127.0.0.1";
 
@@ -30,6 +30,7 @@ public class Client extends JFrame {
 
     // connect to server and process messages from server
     public void runClient() {
+        System.out.println("C"+clientNumber+": runClient()");
         try // connect to server, get streams, process connection
         {
             connectToServer(); // create a Socket to make connection

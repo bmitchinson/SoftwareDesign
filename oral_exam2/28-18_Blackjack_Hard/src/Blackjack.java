@@ -15,9 +15,10 @@ import javax.swing.*;
 public class Blackjack {
     public static void main(String[] args){
         Client clientOne = new Client(1);
-        //Client clientTwo = new Client(2);
+        Client clientTwo = new Client(2);
         Dealer dealer = new Dealer();
         clientOne.runClient();
+        clientTwo.runClient();
         dealer.playGame();
         //clientOne.closeConnection();
         System.exit(0);

@@ -1,3 +1,5 @@
+import javax.swing.*;
+import java.awt.*;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -5,27 +7,34 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Dealer {
-    private ObjectOutputStream output;
-    private ObjectInputStream input;
+public class Dealer extends JFrame {
+    private JTextArea displayArea;
+    private ObjectOutputStream outputOne;
+    private ObjectOutputStream outputTwo;
+    private ObjectInputStream inputOne;
+    private ObjectInputStream inputTwo;
     private Player[] players;
     private Card[] cards;
     private ServerSocket server;
-    private Socket connection;
+    private Socket connectionOne;
+    private Socket connectionTwo;
     private int playersConnected = 0;
 
-    public Dealer(){
+    public Dealer() {
+        displayArea = new JTextArea();
+        add(displayArea, BorderLayout.CENTER);
+        setSize(400, 400);
+        setVisible(true);
 
     }
 
-    public void playGame(){
-        try // set up server to receive connections; process connections
-        {
+    public void runServer() {
+        try {
             server = new ServerSocket(23516, 100); // create ServerSocket
 
             while (true) {
                 try {
-                    waitForConnection(); // wait for a connection
+                    waitForTwoConnections(); // wait for a connection
                     getStreams(); // get input & output streams
                     processConnection(); // process connection
                 } catch (EOFException eofException) {
@@ -39,12 +48,17 @@ public class Dealer {
         }
     }
 
-    private void waitForConnection() throws IOException {
-        System.out.println("Waiting for connection");
-        connection = server.accept(); // allow server to accept connection
+    private void waitForTwoConnections() throws IOException {
+        print("Waiting for player 1 connection");
+        connectionOne = server.accept(); // allow server to accept connection
         playersConnected++;
         System.out.println("Connection " + playersConnected + " received from: " +
-                connection.getInetAddress().getHostName());
+                connectionOne.getInetAddress().getHostName());
+        System.out.println("Waiting for player 2 connection");
+        connectionTwo = server.accept(); // allow server to accept connection
+        playersConnected++;
+        System.out.println("Connection " + playersConnected + " received from: " +
+                connectionTwo.getInetAddress().getHostName());
     }
 
     // get streams to send and receive data
@@ -70,7 +84,7 @@ public class Dealer {
         }
     }
 
-        // close streams and socket
+    // close streams and socket
     private void closeConnection() {
         System.out.println("\nTerminating connection\n");
 
@@ -83,41 +97,34 @@ public class Dealer {
         }
     }
 
-    private class Player{
+    private void print(String message){
+        displayArea.append("\n"+message);
+    }
+
+    private class Player {
         private int playerNum;
         private Card[] currentCards;
 
-        public Player(int num, Card initDeal[]){
+        public Player(int num, Card initDeal[]) {
             int playerNum = num;
             currentCards = initDeal;
         }
 
-        public boolean isOver(){
+        public boolean isOver() {
             // if sum of currentCards exceeds 21, including ace dual value
             return false;
         }
     }
 
-    private void firstDeal(){
+    private void firstDeal() {
 
     }
 
-    private void deal(Player player){
+    private void deal(Player player) {
 
     }
 
-    private void hit(Player player){
+    private void hit(Player player) {
 
     }
-
-    // dealer is the terminal server
-
-    // Variables:
-    // Card Object Array[52] wow i'm dumb this should be a stack. except actually
-    //                       could you shuffle that stack? maybe no then.
-    // enum for suit, and card values
-
-    // Methods:
-    // shuffle() - shuffles card stack
-    // initalize() - create all 52 cards by iterating through suit, number
 }
