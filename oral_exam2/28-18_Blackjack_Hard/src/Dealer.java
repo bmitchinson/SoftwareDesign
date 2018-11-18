@@ -61,8 +61,18 @@ public class Dealer extends JFrame {
 
     public void execute() {
         try {
-            players[0] = new Player(server.accept(), );
+            players[0] = new Player(server.accept(), "Player One");
+            runGame.execute(players[0]);
+            players[1] = new Player(server.accept(), "Player Two");
+            runGame.execute(players[1]);
         }
+        catch (IOException ioException){
+            ioException.printStackTrace();
+            System.exit(1);
+        }
+
+        gameLock.lock();
+
     }
 
     public void runServer() {
@@ -149,10 +159,10 @@ public class Dealer extends JFrame {
         // TODO: Make this the hand object. replace all other card objects with hand
         private Card[] heldCards;
 
-        // TODO: Change this initial Deal to an initial Hand
-        public Player(Socket socket, String name, Card initDeal[]) {
+        // TODO: add an initial Hand parameter
+        public Player(Socket socket, String name) {
             playerName = name;
-            heldCards = initDeal;
+            //heldCards = initDeal;
             connection = socket;
 
             try {
@@ -169,7 +179,30 @@ public class Dealer extends JFrame {
 
         public void run() {
             displayMessage(String.format("%s connected", playerName));
-            // TODO NEXT: side by side tic tac and fill in dealer
+            if (playerName.equals("Player One")) {
+                output.format("Player X Connected\n" +
+                        "Waiting for another player\n");
+                output.flush();
+                gameLock.lock();
+                try {
+                    while (suspended) {
+                        otherPlayerConnected.await();
+                    }
+                } catch (InterruptedException exception) {
+                    exception.printStackTrace();
+                } finally {
+                    gameLock.unlock();
+                }
+
+                output.format("Other player connected. Your move.\n");
+                output.flush();
+            } else {
+                output.format("Player Two connected, please wait\n");
+                output.flush();
+            }
+            while (true){
+                output.format("Player one chillin");
+            }
         }
 
         public boolean isOver() {

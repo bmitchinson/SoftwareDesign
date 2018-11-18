@@ -8,6 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Formatter;
 import java.util.Scanner;
+import java.util.Timer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Condition;
@@ -217,7 +218,9 @@ public class TicTacToeServer extends JFrame {
 
                 // while game not over
                 while (!isGameOver()) {
-                    int location = 0; // initialize move location
+                    output.format(Integer.toString(playerNumber)+"Sleepin");
+                    Thread.sleep(2000);
+                    /*int location = 0; // initialize move location
 
                     if (input.hasNext())
                         location = input.nextInt(); // get move location
@@ -231,8 +234,10 @@ public class TicTacToeServer extends JFrame {
                     {
                         output.format("Invalid move, try again\n");
                         output.flush(); // flush output
-                    }
+                    }*/
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             } finally {
                 try {
                     connection.close(); // close connection to client
