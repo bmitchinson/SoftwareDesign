@@ -69,6 +69,7 @@ public class TicTacToeServer extends JFrame {
         for (int i = 0; i < players.length; i++) {
             try // wait for connection, create Player, start runnable
             {
+                System.out.println("Accepting " + Integer.toString(i));
                 players[i] = new Player(server.accept(), i);
                 runGame.execute(players[i]); // execute player runnable
             } catch (IOException ioException) {
@@ -76,13 +77,14 @@ public class TicTacToeServer extends JFrame {
                 System.exit(1);
             }
         }
-
+        System.out.println("Server 79 Lock");
         gameLock.lock(); // lock game to signal player X's thread
 
         try {
             players[PLAYER_X].setSuspended(false); // resume player X
             otherPlayerConnected.signal(); // wake up player X's thread
         } finally {
+            System.out.println("Server 88 unlock");
             gameLock.unlock(); // unlock game after signalling player X
         }
     }
@@ -104,6 +106,7 @@ public class TicTacToeServer extends JFrame {
     public boolean validateAndMove(int location, int player) {
         // while not current player, must wait for turn
         while (player != currentPlayer) {
+
             gameLock.lock(); // lock game to wait for other player to go
 
             try {
@@ -111,6 +114,7 @@ public class TicTacToeServer extends JFrame {
             } catch (InterruptedException exception) {
                 exception.printStackTrace();
             } finally {
+                System.out.println("validation unlock");
                 gameLock.unlock(); // unlock game after waiting
             }
         }
@@ -187,6 +191,7 @@ public class TicTacToeServer extends JFrame {
             // send client its mark (X or O), process messages from client
             try {
                 displayMessage("Player " + mark + " connected\n");
+                System.out.println("From player " + mark + ": connected 191");
                 output.format("%s\n", mark); // send player's mark
                 output.flush(); // flush output
 
@@ -195,16 +200,18 @@ public class TicTacToeServer extends JFrame {
                     output.format("%s\n%s", "Player X connected",
                             "Waiting for another player\n");
                     output.flush(); // flush output
-
+                    System.out.println("198 Lock");
                     gameLock.lock(); // lock game to  wait for second player
 
                     try {
                         while (suspended) {
+                            System.out.println("Waiting for player 2");
                             otherPlayerConnected.await(); // wait for player O
                         }
                     } catch (InterruptedException exception) {
                         exception.printStackTrace();
                     } finally {
+                        System.out.println("Player" + Integer.toString(playerNumber)+ "210 Unlock");
                         gameLock.unlock(); // unlock game after second player
                     }
 
@@ -218,9 +225,7 @@ public class TicTacToeServer extends JFrame {
 
                 // while game not over
                 while (!isGameOver()) {
-                    output.format(Integer.toString(playerNumber)+"Sleepin");
-                    Thread.sleep(2000);
-                    /*int location = 0; // initialize move location
+                    int location = 0; // initialize move location
 
                     if (input.hasNext())
                         location = input.nextInt(); // get move location
@@ -234,10 +239,8 @@ public class TicTacToeServer extends JFrame {
                     {
                         output.format("Invalid move, try again\n");
                         output.flush(); // flush output
-                    }*/
+                    }
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             } finally {
                 try {
                     connection.close(); // close connection to client

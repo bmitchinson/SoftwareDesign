@@ -6,112 +6,76 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Formatter;
+import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class Client extends JFrame {
-    private JTextArea displayArea; // display info to user
-    private ObjectOutputStream output; // output stream to server
-    private ObjectInputStream input; // input stream from server
-    private String message = ""; // message from server
-    private String dealerAddress; // host server for this application
-    private Socket client; // socket to communicate with server
-    private int clientNumber;
+public class Client extends JFrame implements Runnable {
+    private JTextArea displayArea;
+    private Socket connection;
+    private Scanner input;
+    private Formatter output;
+    private boolean myTurn;
+    private String myName;
 
     public Client() {
-        super("Player " + Integer.toString(0));
-        this.clientNumber = 0;
-
-        dealerAddress = "127.0.0.1";
+        displayArea = new JTextArea(4,30);
+        displayArea.setEditable(false);
+        add(new JScrollPane(displayArea), BorderLayout.SOUTH);
 
         displayArea = new JTextArea();
         add(displayArea, BorderLayout.CENTER);
+
         setSize(400, 400);
+        setResizable(false);
+        setLocationRelativeTo(null);
+        setAlwaysOnTop(true);
         setVisible(true);
+        startClient();
     }
 
-    // connect to server and process messages from server
-    public void runClient() {
-        System.out.println("C"+clientNumber+": runClient()");
-        try // connect to server, get streams, process connection
+    public void startClient() {
+        try
         {
-            connectToServer(); // create a Socket to make connection
-            getStreams(); // get the input and output streams
-            processConnection(); // process connection
-        } catch (EOFException eofException) {
-            displayMessage("\nClient terminated connection");
+            connection = new Socket(InetAddress.getByName("127.0.0.1"),23516);
+            input = new Scanner(connection.getInputStream());
+            output = new Formatter(connection.getOutputStream());
         } catch (IOException ioException) {
+            System.out.println("\nConnection failed? Did you try starting a server first?\n");
             ioException.printStackTrace();
+            System.exit(1);
+        }
+
+        ExecutorService worker = Executors.newFixedThreadPool(1);
+        worker.execute(this);
+    }
+
+    public void run() {
+        // TODO: Coordinate server giving client it's name
+        //myName = input.nextLine();
+        //myTurn = myName.equals(myName.equals("Player One"));
+
+        while (true) {
+            if (input.hasNextLine())
+                processMessage(input.nextLine());
         }
     }
 
-    // connect to server
-    private void connectToServer() throws IOException {
-        displayMessage("Attempting connection\n");
-
-        // create Socket to make connection to server
-        client = new Socket(InetAddress.getByName(dealerAddress), 23516);
-
-        // display connection information
-        displayMessage("Connected to: " +
-                client.getInetAddress().getHostName());
+    private void processMessage(String message){
+        // TODO: Process server commands
     }
 
-    // get streams to send and receive data
-    private void getStreams() throws IOException {
-        // set up output stream for objects
-        output = new ObjectOutputStream(client.getOutputStream());
-        output.flush(); // flush output buffer to send header information
+    // TODO: sendHit(), sendStay()
 
-        // set up input stream for objects
-        input = new ObjectInputStream(client.getInputStream());
-
-        displayMessage("\nGot I/O streams\n");
-    }
-
-    // process connection with server
-    private void processConnection() throws IOException {
-        // enable enterField so client user can send messages
-
-        do // process messages sent from server
-        {
-            try // read message and display it
-            {
-                message = (String) input.readObject(); // read new message
-                displayMessage("\n" + message); // display message
-            } catch (ClassNotFoundException classNotFoundException) {
-                displayMessage("\nUnknown object type received");
-            }
-
-        } while (!message.equals("SERVER>>> TERMINATE"));
-    }
-
-    // send message to server
-    private void sendData(String message) {
-        try // send object to server
-        {
-            output.writeObject("CLIENT>>> " + message);
-            output.flush(); // flush data to output
-            displayMessage("\nCLIENT>>> " + message);
-        } catch (IOException ioException) {
-            displayArea.append("\nError writing object");
-        }
-    }
-
-    // manipulates displayArea in the event-dispatch thread
     private void displayMessage(final String messageToDisplay) {
-        displayArea.append(messageToDisplay);
-    }
-
-    // close streams and socket
-    public void closeConnection() {
-        displayMessage("\nClosing connection");
-
-        try {
-            output.close(); // close output stream
-            input.close(); // close input stream
-            client.close(); // close socket
-        } catch (IOException ioException) {
-            ioException.printStackTrace();
-        }
+        SwingUtilities.invokeLater(
+                new Runnable() {
+                    public void run() {
+                        displayArea.append(messageToDisplay); // updates output
+                    }
+                }
+        );
     }
 
 }

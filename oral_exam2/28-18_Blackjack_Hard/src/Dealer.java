@@ -6,6 +6,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Formatter;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
@@ -16,15 +18,12 @@ import java.util.concurrent.locks.ReentrantLock;
 
 // TODO: JDoc that's transparent about the reference of "fig28_11_14"
 public class Dealer extends JFrame {
-    private final static int P_ONE = 1;
-    private final static int P_TWO = 2;
-    // TODO: Create a "Hand" class to represent cards, but also their total.
-    //       Dynamically factors in the ace based on what's held. Constructed with
-    //       an initial deal. Use this instead of the Card array below.
     private Card[] cards;
+    private JScrollPane outputAreaPane;
     private JTextArea outputArea;
     private Player[] players;
     private ServerSocket server;
+    private DateTimeFormatter timeFormat;
     private int currentPlayer;
     private ExecutorService runGame;
     private Lock gameLock;
@@ -32,129 +31,87 @@ public class Dealer extends JFrame {
     private Condition otherPlayerTurn;
 
     public Dealer() {
-        super("Dealer (Network Server)");
+        super("Dealer (Server Log)");
 
         runGame = Executors.newFixedThreadPool(2);
         gameLock = new ReentrantLock();
         otherPlayerConnected = gameLock.newCondition();
         otherPlayerTurn = gameLock.newCondition();
 
+        timeFormat = DateTimeFormatter.ofPattern("hh:mm:ss.SSS: ");
+
         // TODO: Logic to instantiate shuffled deck
 
         players = new Player[2];
-        currentPlayer = P_ONE;
+        currentPlayer = 0;
 
         try {
             server = new ServerSocket(23516, 2); // Setup socket
         } catch (IOException ioException) {
+            System.out.println("\nPort 23516 is already in use, " +
+                    "do you already have a server running?\n");
             ioException.printStackTrace();
             System.exit(1);
         }
 
         outputArea = new JTextArea();
-        add(outputArea, BorderLayout.CENTER);
-        outputArea.setText("Server awaiting connections...\n");
-        setSize(400, 400);
+        outputAreaPane = new JScrollPane(outputArea);
+        add(outputAreaPane, BorderLayout.CENTER);
+        outputArea.setText(LocalTime.now().format(timeFormat) +
+                "Server opened and awaiting connections\n");
+        setSize(400, 300);
+        setResizable(false);
+        setLocationRelativeTo(null);
+        setAlwaysOnTop(true);
         setVisible(true);
 
     }
 
     public void execute() {
         try {
+            displayMessage("Waiting for first connection");
             players[0] = new Player(server.accept(), "Player One");
+            displayMessage("First connection received");
             runGame.execute(players[0]);
+            displayMessage("Waiting for second connection");
             players[1] = new Player(server.accept(), "Player Two");
+            displayMessage("Second connection received");
             runGame.execute(players[1]);
-        }
-        catch (IOException ioException){
+        } catch (IOException ioException) {
             ioException.printStackTrace();
             System.exit(1);
         }
 
         gameLock.lock();
-
+        try {
+            players[0].setSuspended(false);
+            displayMessage("Waking with otherPlayerConnected method");
+            otherPlayerConnected.signal();
+        } finally {
+            gameLock.unlock();
+        }
     }
 
-    public void runServer() {
-        try {
-            server = new ServerSocket(23516, 100); // create ServerSocket
-
-            while (true) {
-                try {
-                    waitForTwoConnections(); // wait for a connection
-                    getStreams(); // get input & output streams
-                    processConnection(); // process connection
-                } catch (EOFException eofException) {
-                    System.out.println("Server terminated connection");
-                } finally {
-                    closeConnection(); //  close connection
+    private void displayMessage(final String message) {
+        SwingUtilities.invokeLater(
+                () -> {
+                    outputArea.append(LocalTime.now().format(timeFormat) + message + "\n"); // add message
                 }
-            }
-        } catch (IOException ioException) {
-            ioException.printStackTrace();
-        }
+        );
     }
 
-    private void waitForTwoConnections() throws IOException {
-        print("Waiting for player 1 connection");
-        connectionOne = server.accept(); // allow server to accept connection
-        playersConnected++;
-        System.out.println("Connection " + playersConnected + " received from: " +
-                connectionOne.getInetAddress().getHostName());
-        System.out.println("Waiting for player 2 connection");
-        connectionTwo = server.accept(); // allow server to accept connection
-        playersConnected++;
-        System.out.println("Connection " + playersConnected + " received from: " +
-                connectionTwo.getInetAddress().getHostName());
-    }
+    // TODO: Method to react to client action
 
-    // get streams to send and receive data
-    private void getStreams() throws IOException {
-        // set up output stream for objects
-        output = new ObjectOutputStream(connection.getOutputStream());
-        output.flush(); // flush output buffer to send header information
+    // TODO: Method for "isGameOver" loop condition for players biased on game status
 
-        // set up input stream for objects
-        input = new ObjectInputStream(connection.getInputStream());
-
-        System.out.println("Got I/O streams");
-    }
-
-    private void processConnection() throws IOException {
-        try // send object to client
-        {
-            output.writeObject("SERVER>>> " + "First Hello");
-            output.flush(); // flush output to client
-            System.out.println("\nSERVER>>> " + "First Hello");
-        } catch (IOException ioException) {
-            System.out.println("Error writing object");
-        }
-    }
-
-    // close streams and socket
-    private void closeConnection() {
-        System.out.println("\nTerminating connection\n");
-
-        try {
-            output.close(); // close output stream
-            input.close(); // close input stream
-            connection.close(); // close socket
-        } catch (IOException ioException) {
-            ioException.printStackTrace();
-        }
-    }
-
-    private void print(String message) {
-        outputArea.append("\n" + message);
-    }
+    // TODO: Are connections closed anywhere? Upon game over or exit? Do I need a method for that?
 
     private class Player implements Runnable {
         private Socket connection;
         private Scanner input;
         private Formatter output;
         private String playerName;
-        // TODO: Do I need this? Feel like Locks and all that should take care of it
-        private boolean suspended = true; // whether thread is suspended
+        private boolean suspended = true;
 
         // TODO: Make this the hand object. replace all other card objects with hand
         private Card[] heldCards;
@@ -164,6 +121,7 @@ public class Dealer extends JFrame {
             playerName = name;
             //heldCards = initDeal;
             connection = socket;
+            displayMessage("Internal " + playerName + " spun up.");
 
             try {
                 input = new Scanner(connection.getInputStream());
@@ -174,49 +132,52 @@ public class Dealer extends JFrame {
             }
         }
 
-        // TODO:
-        // public void opponentHandupdate(Hand newHand)
-
         public void run() {
-            displayMessage(String.format("%s connected", playerName));
-            if (playerName.equals("Player One")) {
-                output.format("Player X Connected\n" +
-                        "Waiting for another player\n");
-                output.flush();
-                gameLock.lock();
-                try {
-                    while (suspended) {
-                        otherPlayerConnected.await();
+            try {
+                displayMessage(playerName + " running");
+                if (playerName.equals("Player One")) {
+                    displayMessage(playerName + " waiting for Player Two");
+                    gameLock.lock();
+                    try {
+                        while (suspended) {
+                            otherPlayerConnected.await();
+                        }
+                    } catch (InterruptedException exception) {
+                        exception.printStackTrace();
+                    } finally {
+                        displayMessage(playerName + " woke because Player Two has connected");
+                        gameLock.unlock();
                     }
-                } catch (InterruptedException exception) {
-                    exception.printStackTrace();
-                } finally {
-                    gameLock.unlock();
-                }
 
-                output.format("Other player connected. Your move.\n");
-                output.flush();
-            } else {
-                output.format("Player Two connected, please wait\n");
-                output.flush();
-            }
-            while (true){
-                output.format("Player one chillin");
+                } else {
+                    output.format("Player Two connected, please wait\n");
+                    output.flush();
+                }
+                displayMessage(playerName + " is entering the endless gameplay loop");
+                while (!isGameOver()) {
+                    // TODO: Gameplay Loop
+                }
+            } finally {
+                displayMessage(playerName + " has exited gameplay loop");
+                try {
+                    connection.close();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                    System.exit(1);
+                }
             }
         }
 
-        public boolean isOver() {
+        // TODO:
+        // public void opponentHandUpdate(Hand newHand)
+
+        public void setSuspended(boolean status) {
+            suspended = status;
+        }
+
+        public boolean isGameOver() {
             // if sum of currentCards exceeds 21, including ace dual value
             return false;
         }
     }
-
-    private void displayMessage(final String message) {
-        SwingUtilities.invokeLater(
-                () -> {
-                    outputArea.append(message+"\n"); // add message
-                }
-        );
-    }
-
 }
