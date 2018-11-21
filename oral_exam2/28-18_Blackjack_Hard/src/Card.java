@@ -1,10 +1,16 @@
 public class Card {
-    private String suite;
-    private int value;
+    private char suit;
+    private char value;
 
-    Card(String suite, int value){
-        this.suite = suite;
+    Card(char suit, char value){
+        this.suit = suit;
         this.value = value;
     }
+
+    public char getSuit(){ return suit; }
+
+    public char getValue(){ return value; }
+
+    // TODO: Get Card Representation as JFrame?
 
 }

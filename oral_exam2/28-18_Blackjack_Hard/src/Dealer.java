@@ -19,7 +19,6 @@ import java.util.concurrent.locks.ReentrantLock;
 // TODO: JDoc that's transparent about the reference of "fig28_11_14"
 public class Dealer extends JFrame {
     private Card[] cards;
-    private JScrollPane outputAreaPane;
     private JTextArea outputArea;
     private Player[] players;
     private ServerSocket server;
@@ -38,7 +37,7 @@ public class Dealer extends JFrame {
         otherPlayerConnected = gameLock.newCondition();
         otherPlayerTurn = gameLock.newCondition();
 
-        timeFormat = DateTimeFormatter.ofPattern("hh:mm:ss.SSS: ");
+        timeFormat = DateTimeFormatter.ofPattern("hh:mm:ss.SSS - ");
 
         // TODO: Logic to instantiate shuffled deck
 
@@ -46,7 +45,8 @@ public class Dealer extends JFrame {
         currentPlayer = 0;
 
         try {
-            server = new ServerSocket(23516, 2); // Setup socket
+            // TODO: Change port backlog back to 2
+            server = new ServerSocket(23516, 15); // Setup socket
         } catch (IOException ioException) {
             System.out.println("\nPort 23516 is already in use, " +
                     "do you already have a server running?\n");
@@ -55,10 +55,10 @@ public class Dealer extends JFrame {
         }
 
         outputArea = new JTextArea();
-        outputAreaPane = new JScrollPane(outputArea);
-        add(outputAreaPane, BorderLayout.CENTER);
         outputArea.setText(LocalTime.now().format(timeFormat) +
                 "Server opened and awaiting connections\n");
+        outputArea.setEditable(false);
+        add(new JScrollPane(outputArea), BorderLayout.CENTER);
         setSize(400, 300);
         setResizable(false);
         setLocationRelativeTo(null);
@@ -71,21 +71,19 @@ public class Dealer extends JFrame {
         try {
             displayMessage("Waiting for first connection");
             players[0] = new Player(server.accept(), "Player One");
-            displayMessage("First connection received");
             runGame.execute(players[0]);
             displayMessage("Waiting for second connection");
             players[1] = new Player(server.accept(), "Player Two");
-            displayMessage("Second connection received");
             runGame.execute(players[1]);
+
         } catch (IOException ioException) {
             ioException.printStackTrace();
             System.exit(1);
         }
-
         gameLock.lock();
         try {
             players[0].setSuspended(false);
-            displayMessage("Waking with otherPlayerConnected method");
+            displayMessage("Waking Player One with otherPlayerConnected method");
             otherPlayerConnected.signal();
         } finally {
             gameLock.unlock();
@@ -121,7 +119,6 @@ public class Dealer extends JFrame {
             playerName = name;
             //heldCards = initDeal;
             connection = socket;
-            displayMessage("Internal " + playerName + " spun up.");
 
             try {
                 input = new Scanner(connection.getInputStream());
@@ -135,6 +132,9 @@ public class Dealer extends JFrame {
         public void run() {
             try {
                 displayMessage(playerName + " running");
+                displayMessage("Sending Title Message to Client");
+                sendMessage("Title",playerName);
+
                 if (playerName.equals("Player One")) {
                     displayMessage(playerName + " waiting for Player Two");
                     gameLock.lock();
@@ -150,10 +150,9 @@ public class Dealer extends JFrame {
                     }
 
                 } else {
-                    output.format("Player Two connected, please wait\n");
-                    output.flush();
+                    // TODO: Logic for the second player being connected
                 }
-                displayMessage(playerName + " is entering the endless gameplay loop");
+                displayMessage(playerName + " is entering the gameplay loop");
                 while (!isGameOver()) {
                     // TODO: Gameplay Loop
                 }
@@ -166,6 +165,13 @@ public class Dealer extends JFrame {
                     System.exit(1);
                 }
             }
+        }
+
+        public void sendMessage(String type, String message){
+            output.format(type + "\n");
+            output.flush();
+            output.format(message + "\n");
+            output.flush();
         }
 
         // TODO:
