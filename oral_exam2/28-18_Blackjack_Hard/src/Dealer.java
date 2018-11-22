@@ -1,9 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.io.EOFException;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.LocalTime;
@@ -102,21 +99,24 @@ public class Dealer extends JFrame {
         SwingUtilities.invokeLater(
                 () -> {
                     outputArea.append(LocalTime.now().format(timeFormat) + message + "\n"); // add message
+                    System.out.println(LocalTime.now().format(timeFormat) + message);
                 }
         );
     }
 
     public boolean isGameOver() {
-        // TODO: Get totals from each player's pile, need to write player
-        //       method to getTotal -> hand.getBlackJackTotal
-        return false;
+        if (playersHands[0].getBlackjackTotal() > 21){
+            players[0].sendMessage("GameOver", "Lose");
+            players[1].sendMessage("GameOver", "Win");
+            return true;
+        }
+        else if (playersHands[1].getBlackjackTotal() > 21){
+            players[0].sendMessage("GameOver", "Win");
+            players[1].sendMessage("GameOver", "Lose");
+            return true;
+        }
+        else { return false; }
     }
-
-    // TODO: Method to react to client action
-
-    // TODO: Method for "isGameOver" loop condition for players biased on game status
-
-    // TODO: Are connections closed anywhere? Upon game over or exit? Do I need a method for that?
 
     private class Player implements Runnable {
         private Socket connection;
@@ -124,9 +124,11 @@ public class Dealer extends JFrame {
         private Formatter output;
         private String playerName;
         private String otherPlayerName;
+        private int playerIndex;
+        private int otherPlayerIndex;
         private boolean suspended = true;
+        private boolean hit;
 
-        // TODO: add an initial Hand parameter
         public Player(Socket socket, String name) {
             this.playerName = name;
             if (playerName.equals("Player One")){
@@ -147,10 +149,11 @@ public class Dealer extends JFrame {
         public void run() {
             try {
                 displayMessage(playerName + " running");
-
-                sendMessage("Title", playerName);;
+                sendMessage("Title", playerName);
 
                 if (playerName.equals("Player One")) {
+                    otherPlayerIndex = 1;
+                    playerIndex = 0;
                     sendMessage("Cards", playersHands[0].pileAsStrings());
                     displayMessage(playerName + " waiting for Player Two");
                     gameLock.lock();
@@ -165,40 +168,50 @@ public class Dealer extends JFrame {
                     }
                 }
                 else{
+                    otherPlayerIndex = 0;
+                    playerIndex = 1;
                     sendMessage("Cards",playersHands[1].pileAsStrings());
+                    sendMessage("OpCards",playersHands[0].pileAsStrings());
                 }
+
                 displayMessage(playerName + " is entering the gameplay loop");
                 while (!isGameOver()) {
                     if(currentPlayer.equals(playerName)){
-                        sendMessage("Message","Starting Turn");
+                        displayMessage("Sending signal to enable buttons on " +
+                        playerName);
+                        sendMessage("Buttons","On");
                         // Send other players previous choices:
-                        // TODO: Need to hold game data in dealer, not just players
-                        // Need to enable buttons
-                        // wait for input
+                        sendMessage("OpCards",
+                                playersHands[otherPlayerIndex].pileAsStrings());
+                        displayMessage(playerName + " is waiting on button hit");
+                        hit = getHit();
+                        displayMessage(playerName + " got button hit");
                         // calculate that input
-                        // interpret calcuations:
-                        //     game over check?
-                        //     continue await next turn. (case of 21 is this)
-                        //     send outcome
-                        // switch active player
-                        // wake up other player
-                        // await for wake from other player
-
+                        if(hit){
+                            playersHands[playerIndex].addToPile(deck.removeFromPile(1));
+                            sendMessage("PlayerCards",
+                                    playersHands[playerIndex].pileAsStrings());
+                        }
+                        sendMessage("Buttons","Off");
                         sendMessage("Message","Turn finished, so waiting for other player");
                         currentPlayer = otherPlayerName;
+                        gameLock.lock();
                         otherPlayerTurn.signal();
                         otherPlayerTurn.await();
+                        gameLock.unlock();
                     }
                     else{
                         sendMessage("Message",
                                 "Waiting for " + otherPlayerName);
+                        gameLock.lock();
                         otherPlayerTurn.await();
+                        gameLock.unlock();
                     }
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } finally {
-                displayMessage("Left gameplay loop");
+                displayMessage(playerName + " left gameplay loop");
                 try {
                     connection.close();
                 } catch (IOException ioException) {
@@ -209,7 +222,7 @@ public class Dealer extends JFrame {
         }
 
         public void sendMessage(String type, String message) {
-            displayMessage("Sent: " + type + " to client");
+            displayMessage("Sent: " + type + " to client " + playerName);
             output.format(type + "\n");
             output.flush();
             output.format(message + "\n");
@@ -218,14 +231,22 @@ public class Dealer extends JFrame {
 
         public void sendMessage(String type, String[] messages) {
             output.format(type + "\n");
-            displayMessage("Sent: " + type + " to client");
             output.flush();
             for (String message : messages) {
+                displayMessage("Sent: " + message + " to " + playerName);
                 output.format(message + "\n");
                 output.flush();
             }
             output.format("END\n");
             output.flush();
+        }
+
+        private boolean getHit(){
+            if (input.hasNextLine()){
+                return input.nextLine().equals("Hit");
+            }
+            System.out.println(playerName + ": SHOULD NEVER HAPPEN");
+            return false;
         }
 
         // TODO:

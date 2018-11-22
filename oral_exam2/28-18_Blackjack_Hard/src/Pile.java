@@ -24,6 +24,11 @@ public class Pile {
         }
     }
 
+    Pile(Card[] incomingCards) {
+        cardsInPile = new Card[52];
+        addToPile(incomingCards);
+    }
+
     public void printPile() {
         int i = 0;
         for (Card card : cardsInPile) {
@@ -36,9 +41,9 @@ public class Pile {
         }
     }
 
-    public String[] pileAsStrings(){
+    public String[] pileAsStrings() {
         String[] result = new String[insertIndex];
-        for (int i = 0; i < insertIndex; i++){
+        for (int i = 0; i < insertIndex; i++) {
             result[i] = "" + cardsInPile[i].getSuit()
                     + cardsInPile[i].getValue();
         }
@@ -52,10 +57,9 @@ public class Pile {
     }
 
     public void addToPile(Card[] cardsToAdd) {
-        if (Array.getLength(cardsToAdd) + insertIndex > 52){
+        if (Array.getLength(cardsToAdd) + insertIndex > 52) {
             System.out.println("Cannot add cards, would overflow.");
-        }
-        else{
+        } else {
             for (Card card : cardsToAdd) {
                 cardsInPile[insertIndex] = card;
                 insertIndex++;
@@ -66,6 +70,16 @@ public class Pile {
     public void addToPile(Card cardToAdd) {
         Card[] singleCardArray = {cardToAdd};
         addToPile(singleCardArray);
+    }
+
+    public void addToPile(Pile pileToAdd) {
+        String[] pileToAddAsString = pileToAdd.pileAsStrings();
+        Card[] pileToAddAsCards = new Card[pileToAddAsString.length];
+        int i = 0;
+        for (String card : pileToAddAsString) {
+            pileToAddAsCards[i] = new Card(card.charAt(0), card.charAt(1));
+        }
+        addToPile(pileToAddAsCards);
     }
 
     public Pile removeFromPile(int amount) {

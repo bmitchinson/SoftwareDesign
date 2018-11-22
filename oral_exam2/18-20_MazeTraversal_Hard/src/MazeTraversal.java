@@ -11,7 +11,6 @@ public class MazeTraversal {
         int xLoc = 0;
         int yLoc = 0;
 
-
         originalMaze = mazeToNav;
 
         // iterate through loop to find entrance point
