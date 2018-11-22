@@ -118,7 +118,7 @@ public class Pile {
             }
         }
         if (hasAce && total > 21) {
-            total -= 11;
+            total -= 10;
         }
         return total;
     }

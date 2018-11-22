@@ -88,7 +88,6 @@ public class Dealer extends JFrame {
         gameLock.lock();
         try {
             players[0].setSuspended(false);
-            displayMessage("Waking Player One with otherPlayerConnected method");
             otherPlayerConnected.signal();
         } finally {
             gameLock.unlock();
@@ -98,24 +97,31 @@ public class Dealer extends JFrame {
     private void displayMessage(final String message) {
         SwingUtilities.invokeLater(
                 () -> {
-                    outputArea.append(LocalTime.now().format(timeFormat) + message + "\n"); // add message
+                    outputArea.append(LocalTime.now().format(timeFormat) + message + "\n");
                     System.out.println(LocalTime.now().format(timeFormat) + message);
                 }
         );
     }
 
     public boolean isGameOver() {
-        if (playersHands[0].getBlackjackTotal() > 21){
+        if (playersHands[0].getBlackjackTotal() > 21) {
             players[0].sendMessage("GameOver", "Lose");
+            players[1].sendMessage("OpCards", playersHands[0].pileAsStrings());
             players[1].sendMessage("GameOver", "Win");
             return true;
-        }
-        else if (playersHands[1].getBlackjackTotal() > 21){
+        } else if (playersHands[1].getBlackjackTotal() > 21) {
+            players[0].sendMessage("OpCards", playersHands[1].pileAsStrings());
             players[0].sendMessage("GameOver", "Win");
             players[1].sendMessage("GameOver", "Lose");
             return true;
+        } else if (playersHands[0].getBlackjackTotal() == 21 &&
+                playersHands[1].getBlackjackTotal() == 21) {
+            players[0].sendMessage("GameOver", "Tie");
+            players[1].sendMessage("GameOver", "Tie");
+            return true;
+        } else {
+            return false;
         }
-        else { return false; }
     }
 
     private class Player implements Runnable {
@@ -131,9 +137,11 @@ public class Dealer extends JFrame {
 
         public Player(Socket socket, String name) {
             this.playerName = name;
-            if (playerName.equals("Player One")){
+            if (playerName.equals("Player One")) {
                 otherPlayerName = "Player Two";
-            } else { otherPlayerName = "Player One"; }
+            } else {
+                otherPlayerName = "Player One";
+            }
 
             this.connection = socket;
 
@@ -154,6 +162,13 @@ public class Dealer extends JFrame {
                 if (playerName.equals("Player One")) {
                     otherPlayerIndex = 1;
                     playerIndex = 0;
+                    // TODO: Remove this message for sure
+                    String cardsDevMessage = "Sending Player One cards:";
+                    for (String card : playersHands[0].pileAsStrings()) {
+                        cardsDevMessage += (" " + card);
+                    }
+                    cardsDevMessage += " to Player One";
+                    displayMessage(cardsDevMessage);
                     sendMessage("Cards", playersHands[0].pileAsStrings());
                     displayMessage(playerName + " waiting for Player Two");
                     gameLock.lock();
@@ -166,43 +181,67 @@ public class Dealer extends JFrame {
                     } finally {
                         gameLock.unlock();
                     }
-                }
-                else{
+                } else {
                     otherPlayerIndex = 0;
                     playerIndex = 1;
-                    sendMessage("Cards",playersHands[1].pileAsStrings());
-                    sendMessage("OpCards",playersHands[0].pileAsStrings());
+                    String cardsDevMessage = "Sending Player Two cards:";
+                    for (String card : playersHands[1].pileAsStrings()) {
+                        cardsDevMessage += (" " + card);
+                    }
+                    cardsDevMessage += " to Player Two";
+                    displayMessage(cardsDevMessage);
+                    sendMessage("Cards", playersHands[1].pileAsStrings());
+                    cardsDevMessage = "Sending Player One cards:";
+                    for (String card : playersHands[0].pileAsStrings()) {
+                        cardsDevMessage += (" " + card);
+                    }
+                    cardsDevMessage += " to Player Two";
+                    displayMessage(cardsDevMessage);
+                    sendMessage("OpCards", playersHands[0].pileAsStrings());
                 }
 
                 displayMessage(playerName + " is entering the gameplay loop");
                 while (!isGameOver()) {
-                    if(currentPlayer.equals(playerName)){
+                    if (currentPlayer.equals(playerName)) {
                         displayMessage("Sending signal to enable buttons on " +
-                        playerName);
-                        sendMessage("Buttons","On");
+                                playerName);
+                        sendMessage("Buttons", "On");
                         // Send other players previous choices:
+                        String cardsDevMessage = "Sending " + otherPlayerName + " cards:";
+                        for (String card : playersHands[otherPlayerIndex].pileAsStrings()) {
+                            cardsDevMessage += (" " + card);
+                        }
+                        cardsDevMessage += " to " + playerName;
+                        displayMessage(cardsDevMessage);
                         sendMessage("OpCards",
                                 playersHands[otherPlayerIndex].pileAsStrings());
+                        //
                         displayMessage(playerName + " is waiting on button hit");
                         hit = getHit();
-                        displayMessage(playerName + " got button hit");
+                        displayMessage(playerName + " chose " + hit);
                         // calculate that input
-                        if(hit){
+                        if (hit) {
                             playersHands[playerIndex].addToPile(deck.removeFromPile(1));
-                            sendMessage("PlayerCards",
+                            cardsDevMessage = "Sending " + playerName + " cards:";
+                            for (String card : playersHands[playerIndex].pileAsStrings()) {
+                                cardsDevMessage += (" " + card);
+                            }
+                            cardsDevMessage += " to " + playerName;
+                            displayMessage(cardsDevMessage);
+                            sendMessage("Cards",
                                     playersHands[playerIndex].pileAsStrings());
                         }
-                        sendMessage("Buttons","Off");
-                        sendMessage("Message","Turn finished, so waiting for other player");
+                        sendMessage("Buttons", "Off");
+                        sendMessage("Message", "Turn finished, so waiting for other player");
                         currentPlayer = otherPlayerName;
                         gameLock.lock();
                         otherPlayerTurn.signal();
                         otherPlayerTurn.await();
                         gameLock.unlock();
-                    }
-                    else{
+                    } else {
                         sendMessage("Message",
                                 "Waiting for " + otherPlayerName);
+                        displayMessage(playerName + " waiting for " + otherPlayerName);
                         gameLock.lock();
                         otherPlayerTurn.await();
                         gameLock.unlock();
@@ -222,7 +261,6 @@ public class Dealer extends JFrame {
         }
 
         public void sendMessage(String type, String message) {
-            displayMessage("Sent: " + type + " to client " + playerName);
             output.format(type + "\n");
             output.flush();
             output.format(message + "\n");
@@ -233,7 +271,6 @@ public class Dealer extends JFrame {
             output.format(type + "\n");
             output.flush();
             for (String message : messages) {
-                displayMessage("Sent: " + message + " to " + playerName);
                 output.format(message + "\n");
                 output.flush();
             }
@@ -241,16 +278,12 @@ public class Dealer extends JFrame {
             output.flush();
         }
 
-        private boolean getHit(){
-            if (input.hasNextLine()){
+        private boolean getHit() {
+            if (input.hasNext()) {
                 return input.nextLine().equals("Hit");
             }
-            System.out.println(playerName + ": SHOULD NEVER HAPPEN");
             return false;
         }
-
-        // TODO:
-        // public void opponentHandUpdate(Hand newHand)
 
         public void setSuspended(boolean status) {
             suspended = status;

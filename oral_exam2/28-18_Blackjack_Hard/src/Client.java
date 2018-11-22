@@ -100,7 +100,6 @@ public class Client extends JFrame implements Runnable {
             ioException.printStackTrace();
             System.exit(1);
         }
-
         ExecutorService worker = Executors.newFixedThreadPool(1);
         worker.execute(this);
     }
@@ -126,11 +125,15 @@ public class Client extends JFrame implements Runnable {
         }
         else if (message.equals("Cards")) {
             updatePile(true);
+            // TODO: Remove update board
             updateBoard();
+            background.refreshPlayer();
         }
         else if (message.equals("OpCards")) {
             updatePile(false);
+            // TODO: Remove update board
             updateBoard();
+            background.refreshOpponent();
         }
         else if (message.equals("Buttons")) {
             if(input.nextLine().equals("On")){ setButtonsActive(true); }
@@ -139,14 +142,19 @@ public class Client extends JFrame implements Runnable {
         else if (message.equals("GameOver")) {
             setButtonsActive(false);
             gameover = true;
-            if (input.nextLine().equals("Win")) {
+            String type = input.nextLine();
+            if (type.equals("Win")) {
                 displayMessage("YOU WON :D");
                 setTitle(getTitle() + " - YOU WON!");
                 setStatus("YOU WON!!");
-            } else {
+            } else if (type.equals("Lost")){
                 displayMessage("...you lost :(");
                 setTitle(getTitle() + "- ...you lost :(");
                 setStatus("You lost :(");
+            } else {
+                displayMessage("Tie Game!");
+                setTitle(getTitle() + "- Tie Game");
+                setStatus("Tie Game");
             }
         }
         else if (message.equals("Message")) {
@@ -181,13 +189,13 @@ public class Client extends JFrame implements Runnable {
 
     private void sendHit(){
         displayMessage("Sending Hit to server");
-        output.format("Hit");
+        output.format("Hit\n");
         output.flush();
     }
 
     private void sendStay(){
         displayMessage("Sending Stay to server");
-        output.format("Stay");
+        output.format("Stay\n");
         output.flush();
     }
 
@@ -231,8 +239,46 @@ public class Client extends JFrame implements Runnable {
         stayButton.setEnabled(status);
     }
 
+    private class CardImage extends JPanel {
+        BufferedImage cardImage;
+
+        CardImage(char suit, char value, int index){
+            String url = "/img/cards/" +
+                    Character.toString(suit) + Character.toString(value) +
+                    ".png";
+            try {
+                cardImage = ImageIO.read(this.getClass().getResource(url));
+                cardImage = resize(cardImage, 65,105);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            setBounds(index * 25, 0, 65, 100);
+        }
+
+        private BufferedImage resize(BufferedImage img, int newW, int newH){
+            Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
+            BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+
+            Graphics2D g2d = dimg.createGraphics();
+            g2d.drawImage(tmp, 0, 0, null);
+            g2d.dispose();
+
+            return dimg;
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            g.drawImage(cardImage, 0, 0, null);
+        }
+
+    }
+
     private class Background extends JPanel {
         BufferedImage bgImage;
+        JLayeredPane playerCardStack = new JLayeredPane();
+        JLayeredPane opponentCardStack = new JLayeredPane();
 
         Background(String url) {
 
@@ -264,6 +310,16 @@ public class Client extends JFrame implements Runnable {
             opponentSpace.setPreferredSize(new Dimension(352, 142));
             opponentSpace.setLayout(new FlowLayout(FlowLayout.LEADING, 15,15));
 
+            //opponentCardStack.setBorder(BorderFactory.createLineBorder(Color.black));
+            opponentCardStack.setPreferredSize(new Dimension(250,110));
+
+            opponentTotal = new JLabel();
+            opponentTotal.setFont(new Font("Veranda",1,28));
+            opponentTotal.setText(Integer.toString(opponentPile.getBlackjackTotal()));
+
+            opponentSpace.add(opponentCardStack);
+            opponentSpace.add(opponentTotal);
+
             JPanel middle = new JPanel();
             middle.setBackground(new Color(0,0,0,0));
             middle.setPreferredSize(new Dimension(352, 70));
@@ -277,6 +333,16 @@ public class Client extends JFrame implements Runnable {
             playerSpace.setMinimumSize(new Dimension(352, 142));
             playerSpace.setPreferredSize(new Dimension(352, 142));
             playerSpace.setLayout(new FlowLayout(FlowLayout.LEADING, 15,15));
+
+            //playerCardStack.setBorder(BorderFactory.createLineBorder(Color.black));
+            playerCardStack.setPreferredSize(new Dimension(250,110));
+
+            playerTotal = new JLabel();
+            playerTotal.setFont(new Font("Veranda",1,28));
+            playerTotal.setText(Integer.toString(playerPile.getBlackjackTotal()));
+
+            playerSpace.add(playerCardStack);
+            playerSpace.add(playerTotal);
 
             inPanel.add(opponentSpace);
             inPanel.add(middle);
@@ -297,11 +363,35 @@ public class Client extends JFrame implements Runnable {
         }
 
         public void refreshOpponent(){
-
+            SwingUtilities.invokeLater(() -> {
+                opponentTotal.setText("Other:\n" + Integer.toString(opponentPile.getBlackjackTotal()));
+                opponentCardStack.removeAll();
+                int i = 0;
+                for (String card : opponentPile.pileAsStrings()){
+                    CardImage tmp = new CardImage(card.charAt(0), card.charAt(1), i);
+                    tmp.setBounds(i * 25, 0, 65,100);
+                    opponentCardStack.add(tmp, new Integer(i*100));
+                    i++;
+                }
+                self.validate();
+                self.repaint();
+            });
         }
 
         public void refreshPlayer(){
-
+            SwingUtilities.invokeLater(() -> {
+                playerTotal.setText("You:\n" + Integer.toString(playerPile.getBlackjackTotal()));
+                playerCardStack.removeAll();
+                int i = 0;
+                for (String card : playerPile.pileAsStrings()){
+                    CardImage tmp = new CardImage(card.charAt(0), card.charAt(1), i);
+                    tmp.setBounds(i * 25, 0, 65,100);
+                    playerCardStack.add(tmp,new Integer(i*100));
+                    i++;
+                }
+                self.validate();
+                self.repaint();
+            });
         }
 
         @Override
