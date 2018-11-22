@@ -1,50 +1,111 @@
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 public class Pile {
 
     private Card[] cardsInPile;
     // Hearts, Diamonds, Spades, Clubs
-    private char[] suits = {'H','D','S','C'};
+    private char[] suits = {'H', 'D', 'S', 'C'};
     //T means 10
-    private char[] values = {'A','2','3','4','5','6','7','8','9','T','K','Q','J'};
+    private char[] values = {'A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K'};
     private int insertIndex = 0;
 
-    public void Pile(Boolean deckMode){
+    Pile(Boolean deckMode) {
         cardsInPile = new Card[52];
-        if (deckMode){
-            System.out.println("Initializing a full Deck");
-            for (char suit : suits){
-                for (char value : values){
-                    cardsInPile[insertIndex] = new Card(suit, value);
-                    insertIndex++;
+        if (deckMode) {
+            for (char suit : suits) {
+                for (char value : values) {
+                    addToPile(new Card(suit, value));
                 }
             }
-            printPile();
+            shufflePile();
         }
     }
 
-    public void printPile(){
+    public void printPile() {
         int i = 0;
-        System.out.println("Front beginning to end of pile:");
-        for (Card card : cardsInPile){
-            System.out.println("Pos:"+i+
-                    " S:"+card.getSuit()+
-                    " V:"+card.getValue());
+        for (Card card : cardsInPile) {
+            if (card != null) {
+                System.out.println("Pos:" + i +
+                        " S:" + card.getSuit() +
+                        " V:" + card.getValue());
+                i++;
+            }
         }
     }
 
-    public void addToPile(Card[] cardsToAdd){
-        for (Card card : cardsToAdd){
-            cardsInPile[insertIndex] = card;
-            insertIndex++;
+    public String[] pileAsStrings(){
+        String[] result = new String[insertIndex];
+        for (int i = 0; i < insertIndex; i++){
+            result[i] = "" + cardsInPile[i].getSuit()
+                    + cardsInPile[i].getValue();
+        }
+        return result;
+    }
+
+    public void shufflePile() {
+        List<Card> temp = Arrays.asList(cardsInPile);
+        Collections.shuffle(temp);
+        cardsInPile = (Card[]) temp.toArray();
+    }
+
+    public void addToPile(Card[] cardsToAdd) {
+        if (Array.getLength(cardsToAdd) + insertIndex > 52){
+            System.out.println("Cannot add cards, would overflow.");
+        }
+        else{
+            for (Card card : cardsToAdd) {
+                cardsInPile[insertIndex] = card;
+                insertIndex++;
+            }
         }
     }
 
-    public void addToPile(Card cardToAdd){
+    public void addToPile(Card cardToAdd) {
         Card[] singleCardArray = {cardToAdd};
         addToPile(singleCardArray);
     }
 
-}
+    public Pile removeFromPile(int amount) {
+        Card[] removed = new Card[amount];
+        if (amount > insertIndex) {
+            System.out.println(insertIndex + " Cards in pile, " +
+                    "can't remove " + amount);
+            return null;
+        } else {
+            for (int i = 0; i < amount; i++) {
+                insertIndex--;
+                removed[i] = cardsInPile[insertIndex];
+                cardsInPile[insertIndex] = null;
+            }
+            Pile returnPile = new Pile(false);
+            returnPile.addToPile(removed);
+            return returnPile;
+        }
+    }
 
-// TODO: Create a "Hand" class to represent cards, but also their total.
-//       Dynamically factors in the ace based on what's held. Constructed with
-//       an initial deal. Use this instead of the Card array below.
+    public int getBlackjackTotal() {
+        int total = 0;
+        boolean hasAce = false;
+        for (Card card : cardsInPile) {
+            if (card != null) {
+                char value = card.getValue();
+                if (value == 'A') {
+                    total += 11;
+                    hasAce = true;
+                } else if (value == 'T' || value == 'K' ||
+                        value == 'Q' || value == 'J') {
+                    total += 10;
+                } else {
+                    total += Character.getNumericValue(value);
+                }
+            }
+        }
+        if (hasAce && total > 21) {
+            total -= 11;
+        }
+        return total;
+    }
+}

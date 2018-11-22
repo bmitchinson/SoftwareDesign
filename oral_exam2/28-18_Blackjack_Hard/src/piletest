@@ -1,0 +1,39 @@
+System.out.println("Initial Deck");
+        deck.printPile();
+        Card[] sample = {new Card('H','4'),
+                new Card('D','T'),new Card('S','A'),
+                new Card('H','K'),new Card('C','6'),};
+        System.out.println("Attempted overflow of pile");
+        deck.addToPile(sample);
+        deck.printPile();
+        /*
+        System.out.println("Removing four cards from top");
+        Card[] removed = deck.removeFromPile(4);
+        System.out.println("Result of \'pop\' from pile:");
+        for (Card card : removed){
+            card.printCard();
+        }
+        System.out.println("Print Deck");
+        deck.printPile();
+
+        System.out.println("Removing one card from top");
+        Card[] single = deck.removeFromPile(1);
+        System.out.println("Result of \'pop\' from pile:");
+        for (Card card : single){
+            card.printCard();
+        }
+        System.out.println("Print deck");
+        deck.printPile();
+
+        System.out.println("Add removed 4 back to pile");
+        deck.addToPile(removed);
+        System.out.println("Pile post 4 addition:");
+        deck.printPile();
+        // TODO: A test for overflow addition: Requires deck mode
+        //System.out.println("Attempted overflow addition");
+        //deck.addToPile(removed);
+        System.out.println("Attempted overflow removal");
+        deck.removeFromPile(10);
+        System.out.println("Print Pile");
+        deck.printPile();
+        */

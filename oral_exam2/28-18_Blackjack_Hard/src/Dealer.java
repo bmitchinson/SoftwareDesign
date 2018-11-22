@@ -16,14 +16,22 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-// TODO: JDoc that's transparent about the reference of "fig28_11_14"
+// TODO: JDoc that are transparent about the reference of "fig28_11_14"
 public class Dealer extends JFrame {
-    private Card[] cards;
-    private JTextArea outputArea;
+
+    // Game Logic
+    private Pile deck;
     private Player[] players;
+    private String currentPlayer;
+    private Pile[] playersHands = {new Pile(false),
+            new Pile(false)};
+
+    // GUI Elements
+    private JTextArea outputArea;
+
+    // Networking + Threading
     private ServerSocket server;
     private DateTimeFormatter timeFormat;
-    private int currentPlayer;
     private ExecutorService runGame;
     private Lock gameLock;
     private Condition otherPlayerConnected;
@@ -36,17 +44,17 @@ public class Dealer extends JFrame {
         gameLock = new ReentrantLock();
         otherPlayerConnected = gameLock.newCondition();
         otherPlayerTurn = gameLock.newCondition();
-
         timeFormat = DateTimeFormatter.ofPattern("hh:mm:ss.SSS - ");
 
-        // TODO: Logic to instantiate shuffled deck
-
         players = new Player[2];
-        currentPlayer = 0;
+        currentPlayer = "Player One";
+
+        deck = new Pile(true);
+        playersHands[0] = deck.removeFromPile(2);
+        playersHands[1] = deck.removeFromPile(2);
 
         try {
-            // TODO: Change port backlog back to 2
-            server = new ServerSocket(23516, 15); // Setup socket
+            server = new ServerSocket(23516, 12); // Setup socket
         } catch (IOException ioException) {
             System.out.println("\nPort 23516 is already in use, " +
                     "do you already have a server running?\n");
@@ -98,6 +106,12 @@ public class Dealer extends JFrame {
         );
     }
 
+    public boolean isGameOver() {
+        // TODO: Get totals from each player's pile, need to write player
+        //       method to getTotal -> hand.getBlackJackTotal
+        return false;
+    }
+
     // TODO: Method to react to client action
 
     // TODO: Method for "isGameOver" loop condition for players biased on game status
@@ -109,16 +123,17 @@ public class Dealer extends JFrame {
         private Scanner input;
         private Formatter output;
         private String playerName;
+        private String otherPlayerName;
         private boolean suspended = true;
-
-        // TODO: Make this the hand object. replace all other card objects with hand
-        private Card[] heldCards;
 
         // TODO: add an initial Hand parameter
         public Player(Socket socket, String name) {
-            playerName = name;
-            //heldCards = initDeal;
-            connection = socket;
+            this.playerName = name;
+            if (playerName.equals("Player One")){
+                otherPlayerName = "Player Two";
+            } else { otherPlayerName = "Player One"; }
+
+            this.connection = socket;
 
             try {
                 input = new Scanner(connection.getInputStream());
@@ -132,10 +147,11 @@ public class Dealer extends JFrame {
         public void run() {
             try {
                 displayMessage(playerName + " running");
-                displayMessage("Sending Title Message to Client");
-                sendMessage("Title",playerName);
+
+                sendMessage("Title", playerName);;
 
                 if (playerName.equals("Player One")) {
+                    sendMessage("Cards", playersHands[0].pileAsStrings());
                     displayMessage(playerName + " waiting for Player Two");
                     gameLock.lock();
                     try {
@@ -145,19 +161,44 @@ public class Dealer extends JFrame {
                     } catch (InterruptedException exception) {
                         exception.printStackTrace();
                     } finally {
-                        displayMessage(playerName + " woke because Player Two has connected");
                         gameLock.unlock();
                     }
-
-                } else {
-                    // TODO: Logic for the second player being connected
+                }
+                else{
+                    sendMessage("Cards",playersHands[1].pileAsStrings());
                 }
                 displayMessage(playerName + " is entering the gameplay loop");
                 while (!isGameOver()) {
-                    // TODO: Gameplay Loop
+                    if(currentPlayer.equals(playerName)){
+                        sendMessage("Message","Starting Turn");
+                        // Send other players previous choices:
+                        // TODO: Need to hold game data in dealer, not just players
+                        // Need to enable buttons
+                        // wait for input
+                        // calculate that input
+                        // interpret calcuations:
+                        //     game over check?
+                        //     continue await next turn. (case of 21 is this)
+                        //     send outcome
+                        // switch active player
+                        // wake up other player
+                        // await for wake from other player
+
+                        sendMessage("Message","Turn finished, so waiting for other player");
+                        currentPlayer = otherPlayerName;
+                        otherPlayerTurn.signal();
+                        otherPlayerTurn.await();
+                    }
+                    else{
+                        sendMessage("Message",
+                                "Waiting for " + otherPlayerName);
+                        otherPlayerTurn.await();
+                    }
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             } finally {
-                displayMessage(playerName + " has exited gameplay loop");
+                displayMessage("Left gameplay loop");
                 try {
                     connection.close();
                 } catch (IOException ioException) {
@@ -167,10 +208,23 @@ public class Dealer extends JFrame {
             }
         }
 
-        public void sendMessage(String type, String message){
+        public void sendMessage(String type, String message) {
+            displayMessage("Sent: " + type + " to client");
             output.format(type + "\n");
             output.flush();
             output.format(message + "\n");
+            output.flush();
+        }
+
+        public void sendMessage(String type, String[] messages) {
+            output.format(type + "\n");
+            displayMessage("Sent: " + type + " to client");
+            output.flush();
+            for (String message : messages) {
+                output.format(message + "\n");
+                output.flush();
+            }
+            output.format("END\n");
             output.flush();
         }
 
@@ -179,11 +233,6 @@ public class Dealer extends JFrame {
 
         public void setSuspended(boolean status) {
             suspended = status;
-        }
-
-        public boolean isGameOver() {
-            // if sum of currentCards exceeds 21, including ace dual value
-            return false;
         }
     }
 }
