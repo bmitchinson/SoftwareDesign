@@ -59,6 +59,9 @@ public class MazeTraversalKickoff {
         int mazeSelection = input.nextInt();
         input.nextLine();
 
+        // TODO: Need speeds and are those weird exceptions still noted in method
+        //       definition? Need try catch blocks instead.
+
         switch (mazeSelection){
             case (1): new MazeTraversal(mazeOne, 500); break;
             case (2): new MazeTraversal(mazeTwo, 500); break;

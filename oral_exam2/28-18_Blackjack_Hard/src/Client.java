@@ -113,7 +113,6 @@ public class Client extends JFrame implements Runnable {
                 processMessage(input.nextLine());
             }
         }
-        // TODO: Thread innterupt to freeze after game over? Close connections?
     }
 
     private void processMessage(String message) {
@@ -125,13 +124,11 @@ public class Client extends JFrame implements Runnable {
         }
         else if (message.equals("Cards")) {
             updatePile(true);
-            // TODO: Remove update board
             updateBoard();
             background.refreshPlayer();
         }
         else if (message.equals("OpCards")) {
             updatePile(false);
-            // TODO: Remove update board
             updateBoard();
             background.refreshOpponent();
         }
@@ -147,14 +144,18 @@ public class Client extends JFrame implements Runnable {
                 displayMessage("YOU WON :D");
                 setTitle(getTitle() + " - YOU WON!");
                 setStatus("YOU WON!!");
-            } else if (type.equals("Lost")){
+            } else if (type.equals("Lose")){
                 displayMessage("...you lost :(");
                 setTitle(getTitle() + "- ...you lost :(");
                 setStatus("You lost :(");
-            } else {
+            } else if (type.equals("Tie")) {
                 displayMessage("Tie Game!");
                 setTitle(getTitle() + "- Tie Game");
                 setStatus("Tie Game");
+            } else {
+                displayMessage("Why Game Over");
+                setTitle(getTitle() + "- Why Game Over");
+                setStatus("Why Game Over");
             }
         }
         else if (message.equals("Message")) {
@@ -248,12 +249,12 @@ public class Client extends JFrame implements Runnable {
                     ".png";
             try {
                 cardImage = ImageIO.read(this.getClass().getResource(url));
-                cardImage = resize(cardImage, 65,105);
+                cardImage = resize(cardImage, 65,96);
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            setBounds(index * 25, 0, 65, 100);
+            setBounds(index * 25, 0, 65, 93);
         }
 
         private BufferedImage resize(BufferedImage img, int newW, int newH){
@@ -317,8 +318,19 @@ public class Client extends JFrame implements Runnable {
             opponentTotal.setFont(new Font("Veranda",1,28));
             opponentTotal.setText(Integer.toString(opponentPile.getBlackjackTotal()));
 
+            JLabel opponentLabel = new JLabel("Other:");
+            opponentLabel.setFont(new Font("Veranda",1,14));
+
+            JPanel opponentLabelSet = new JPanel();
+            opponentLabelSet.setLayout(new BoxLayout(opponentLabelSet, BoxLayout.Y_AXIS));
+            //opponentLabelSet.setBorder(BorderFactory.createLineBorder(Color.black));
+            opponentLabelSet.setBackground(new Color(0,0,0,0));
+
+            opponentLabelSet.add(opponentLabel);
+            opponentLabelSet.add(opponentTotal);
+
             opponentSpace.add(opponentCardStack);
-            opponentSpace.add(opponentTotal);
+            opponentSpace.add(opponentLabelSet);
 
             JPanel middle = new JPanel();
             middle.setBackground(new Color(0,0,0,0));
@@ -341,8 +353,19 @@ public class Client extends JFrame implements Runnable {
             playerTotal.setFont(new Font("Veranda",1,28));
             playerTotal.setText(Integer.toString(playerPile.getBlackjackTotal()));
 
+            JLabel playerLabel = new JLabel("You:");
+            playerLabel.setFont(new Font("Veranda",1,14));
+
+            JPanel playerLabelSet = new JPanel();
+            playerLabelSet.setLayout(new BoxLayout(playerLabelSet, BoxLayout.Y_AXIS));
+            //playerLabelSet.setBorder(BorderFactory.createLineBorder(Color.black));
+            playerLabelSet.setBackground(new Color(0,0,0,0));
+
+            playerLabelSet.add(playerLabel);
+            playerLabelSet.add(playerTotal);
+
             playerSpace.add(playerCardStack);
-            playerSpace.add(playerTotal);
+            playerSpace.add(playerLabelSet);
 
             inPanel.add(opponentSpace);
             inPanel.add(middle);
@@ -364,7 +387,7 @@ public class Client extends JFrame implements Runnable {
 
         public void refreshOpponent(){
             SwingUtilities.invokeLater(() -> {
-                opponentTotal.setText("Other:\n" + Integer.toString(opponentPile.getBlackjackTotal()));
+                opponentTotal.setText("\n" + Integer.toString(opponentPile.getBlackjackTotal()));
                 opponentCardStack.removeAll();
                 int i = 0;
                 for (String card : opponentPile.pileAsStrings()){
@@ -380,7 +403,7 @@ public class Client extends JFrame implements Runnable {
 
         public void refreshPlayer(){
             SwingUtilities.invokeLater(() -> {
-                playerTotal.setText("You:\n" + Integer.toString(playerPile.getBlackjackTotal()));
+                playerTotal.setText("\n" + Integer.toString(playerPile.getBlackjackTotal()));
                 playerCardStack.removeAll();
                 int i = 0;
                 for (String card : playerPile.pileAsStrings()){
