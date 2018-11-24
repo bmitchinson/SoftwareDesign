@@ -1,6 +1,7 @@
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.DefaultEditorKit;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -28,7 +29,8 @@ public class Converter extends JFrame {
 
         romanLabel.setFont(new Font("Veranda", Font.PLAIN, 14));
         romanText.setFont(new Font("Veranda", Font.PLAIN, 14));
-        //romanText.getDocument().addDocumentListener(romanListener);
+        romanText.getDocument().addDocumentListener(romanListener);
+
         //romanText.addKeyListener(romanKeyListener);
 
         romanPanel.add(romanLabel);
@@ -36,8 +38,8 @@ public class Converter extends JFrame {
 
         arabicLabel.setFont(new Font("Veranda", Font.PLAIN, 14));
         arabicText.setFont(new Font("Veranda", Font.PLAIN, 14));
-        //arabicText.getDocument().addDocumentListener(arabicListener);
-        arabicText.addKeyListener(arabicKeyListener);
+        arabicText.getDocument().addDocumentListener(arabicListener);
+        //arabicText.addKeyListener(arabicKeyListener);
 
         arabicPanel.add(arabicLabel);
         arabicPanel.add(arabicText);
@@ -53,11 +55,12 @@ public class Converter extends JFrame {
 
         initalizeRomanTable();
         setVisible(true);
+
     }
 
     // https://tinyurl.com/BenSWDSource1
     private String intToRoman(int num) {
-        if (num < 0 || num > 3999){
+        if (num < 0 || num > 3999) {
             return "Enter a # in range 1-3999";
         }
         String m[] = {"", "M", "MM", "MMM"};
@@ -80,44 +83,69 @@ public class Converter extends JFrame {
     }
 
     // https://tinyurl.com/BenSWDSource2
-    private int romanToInt(String roman){
-        int intNum=0;
+    private int romanToInt(String roman) {
+        int intNum = 0;
         int prev = 0;
-        for(int i = roman.length()-1; i>=0 ; i--)
-        {
-            int temp = table.get(Character.toUpperCase(roman.charAt(i)));
-            // TODO: Null case here for invalid lookup?
-            if(temp < prev)
-                intNum-=temp;
-            else
-                intNum+=temp;
-            prev = temp;
+        int temp = 0;
+        for (int i = roman.length() - 1; i >= 0; i--) {
+            try {
+                temp = table.get(Character.toUpperCase(roman.charAt(i)));
+                if (temp < prev)
+                    intNum -= temp;
+                else
+                    intNum += temp;
+                prev = temp;
+            } catch (NullPointerException e) {
+                return -1;
+            }
         }
         return intNum;
     }
 
-    private void initalizeRomanTable(){
-        table.put('I',1);
-        table.put('X',10);
-        table.put('C',100);
-        table.put('M',1000);
-        table.put('V',5);
-        table.put('L',50);
-        table.put('D',500);
+    private void initalizeRomanTable() {
+        table.put('I', 1);
+        table.put('X', 10);
+        table.put('C', 100);
+        table.put('M', 1000);
+        table.put('V', 5);
+        table.put('L', 50);
+        table.put('D', 500);
     }
 
     DocumentListener romanListener = new DocumentListener() {
 
         @Override
         public void insertUpdate(DocumentEvent e) {
+            // Temporarily remove the listener from the other field
+            //     so that once converted text is inserted, the other field
+            //     doesn't re-attempt conversion unnecessarily.
+            arabicText.getDocument().removeDocumentListener(arabicListener);
             String roman = romanText.getText();
-            romanText.setText(String.valueOf(romanToInt(roman)));
+            int result = romanToInt(roman);
+
+            if (result == -1)
+                arabicText.setText("Invalid roman entry");
+            else
+                arabicText.setText(String.valueOf(result));
+
+            arabicText.getDocument().addDocumentListener(arabicListener);
         }
 
         @Override
         public void removeUpdate(DocumentEvent e) {
+            // Temporarily remove the listener from the other field
+            //     so that once converted text is inserted, the other field
+            //     doesn't re-attempt conversion unnecessarily.
+            arabicText.getDocument().removeDocumentListener(arabicListener);
             String roman = romanText.getText();
-            romanText.setText(String.valueOf(romanToInt(roman)));
+            int result = romanToInt(roman);
+
+            if (result == -1)
+                arabicText.setText("Invalid roman entry");
+            else
+                arabicText.setText(String.valueOf(result));
+
+            arabicText.getDocument().addDocumentListener(arabicListener);
         }
 
         @Override
@@ -129,11 +157,10 @@ public class Converter extends JFrame {
 
         @Override
         public void insertUpdate(DocumentEvent e) {
-            // TODO: Find something in the event that sites where the
-            //       change came from. only if user, otherwise endless
-            //       loop of updates. Configure a listener that just prints
-            //       roman before you try to implement it proper, then
-            //       look into solving this problem.
+            // Temporarily remove the listener from the other field
+            //     so that once converted text is inserted, the other field
+            //     doesn't re-attempt conversion unnecessarily.
+            romanText.getDocument().removeDocumentListener(romanListener);
 
             int arabic = 0;
             try {
@@ -142,15 +169,20 @@ public class Converter extends JFrame {
             } catch (NumberFormatException error) {
                 if (arabicText.getText().equals("")) {
                     romanText.setText("");
-                }
-                else{
+                } else {
                     romanText.setText("Invalid arabic entry");
                 }
             }
+            romanText.getDocument().addDocumentListener(romanListener);
         }
 
         @Override
         public void removeUpdate(DocumentEvent e) {
+            // Temporarily remove the listener from the other field
+            //     so that once converted text is inserted, the other field
+            //     doesn't re-attempt conversion unnecessarily.
+            romanText.getDocument().removeDocumentListener(romanListener);
+
             int arabic = 0;
             try {
                 arabic = Integer.valueOf(arabicText.getText());
@@ -158,11 +190,11 @@ public class Converter extends JFrame {
             } catch (NumberFormatException error) {
                 if (arabicText.getText().equals("")) {
                     romanText.setText("");
-                }
-                else{
+                } else {
                     romanText.setText("Invalid arabic entry");
                 }
             }
+            romanText.getDocument().addDocumentListener(romanListener);
         }
 
         @Override
