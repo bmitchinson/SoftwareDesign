@@ -49,7 +49,7 @@ public class MazeTraversalKickoff {
         Scanner input = new Scanner(System.in);
 
         System.out.println("******************************************\n" +
-                           "*             MAZE SOLVER                *\n" +
+                           "*               MAZE SOLVER              *\n" +
                            "******************************************\n");
         System.out.print("Would you like to solve maze 1, 2, or 3:");
         while (!input.hasNextInt()){
