@@ -1,6 +1,23 @@
 import java.util.Scanner;
 
+/**
+ * A class who's only purpose is to create a new game of tic tac toe,
+ * by asking the user which of three modes they'll like to play, based on which
+ * subclasses of Player will be participating.
+ * <p>
+ * Completed as part of the S20_TicTacToe_Hard assignment
+ *
+ * @see Player
+ * @see Board
+ * @see HumanPlayer
+ * @see ComputerPlayer
+ */
 public class NewGame {
+    /**
+     *
+     * @param args - unused
+     * @see NewGame
+     */
     public static void main(String args[]){
         Scanner input = new Scanner(System.in);
 

@@ -1,13 +1,33 @@
 import java.util.Scanner;
 
+/**
+ * An extension of the Player class that is able to make a move based on player
+ * input alone.
+ *
+ * @see Player
+ */
 public class HumanPlayer extends Player {
 
     private Scanner input = new Scanner(System.in);
 
+    /**
+     * Initalize a Player object by passing the player symbol
+     *
+     * @param symbol mark player uses in tic tac toe
+     * @see Player
+     */
     public HumanPlayer(char symbol) {
         super(symbol);
     }
 
+    /**
+     * Ask the user where they would like to place their symbol on the board,
+     * validate their input to make sure the move is possible, and don't end
+     * until they've made a successful mark.
+     *
+     * @see Board
+     * @see Player
+     */
     public void makeMove() {
         System.out.println("******************************************");
         System.out.print("Player " + String.valueOf(symbol) + ": " +

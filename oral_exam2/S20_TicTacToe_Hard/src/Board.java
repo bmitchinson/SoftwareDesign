@@ -2,6 +2,21 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
+/**
+ * Class that extends JFrame to represent a tic tac toe board. Initializes a
+ * series of disabled buttons that serve as the cross board, and hold methods to
+ * mark player inputs on the board, as well as interpret board state to check for
+ * a game over and control gameplay. Can be interacted with by any Player class,
+ * regardless if Human or Computer extensions.
+ * <p>
+ * Completed as part of the S20_TicTacToe_Hard assignment
+ *
+ * @see Player
+ * @see HumanPlayer
+ * @see ComputerPlayer
+ * @see JFrame
+ * @see #Board(Player, Player)
+ */
 public class Board extends JFrame {
 
     // GUI Elements
@@ -14,6 +29,20 @@ public class Board extends JFrame {
     private String endResult;
     final public String blank = "(   )";
 
+    /**
+     *
+     * A constructor for the board that stores references to the players to
+     * validate their input, and place the required GUI elements on screen. After
+     * visual layouts are arranged, the board enters a gameplay loop determined by
+     * {@link #isGameOver()}
+     *
+     * @param playerOne a reference to the first player object
+     * @param playerTwo a reference to the second player object
+     * @see Player
+     * @see HumanPlayer
+     * @see ComputerPlayer
+     *
+     */
     public Board(Player playerOne, Player playerTwo) {
 
         // All GUI Initial Configuration
@@ -62,10 +91,21 @@ public class Board extends JFrame {
         print(endResult);
     }
 
+    /**
+     * Print a message to the log above the tictactoe board
+     * @param message message to be displayed
+     */
     private void print(String message) {
         log.append(message + "\n");
     }
 
+    /**
+     * Mark a slot on the board and alter it's text if allowed by game rules.
+     * If allowed and mark is made, return true, if not, return false.
+     * @param slot slot requested to alter
+     * @param symbol symbol to be marked if allowed
+     * @return result of successful mark
+     */
     public boolean mark(int slot, char symbol) {
         if(!buttons[slot].getText().equals(blank)){
             print("Slot " + slot + " is already filled. Try again.");
@@ -77,6 +117,12 @@ public class Board extends JFrame {
         }
     }
 
+    /**
+     * Check the 10 possible scenarios in which a game of tictactoe could end,
+     * detailed in comments within the method.
+     *
+     * @return if game is over based on board state
+     */
     private boolean isGameOver() {
         boolean gameover = false;
         boolean fullboard = true;
