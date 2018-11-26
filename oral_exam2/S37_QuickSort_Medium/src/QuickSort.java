@@ -3,17 +3,43 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * A class to manage the recursion involved in a dual pivot quick sort. Stores
+ * and array object both before and after sorting for comparison, along with
+ * methods to print them to the user for confirmation.
+ *
+ * @see #QuickSort
+ * @see #sort(Integer[])
+ */
 public class QuickSort {
 
     private Integer[] initalArray;
     private Integer[] sortedArray;
     private Random rand = new Random();
 
+    /**
+     * Stores the inital array, and begins the recursion by calling
+     * {@link #sort(Integer[])} on a new copy of the given array
+     *
+     * @param array initial array to be sorted.
+     */
     QuickSort(Integer[] array) {
         initalArray = array;
         sortedArray = sort(Arrays.copyOf(initalArray, initalArray.length));
     }
 
+    /**
+     * This recursive method is used to sort partitions using randomly selected
+     * pivots. It's reaches a base case once there are only zero, one, or two
+     * elements in a partition, at which point it returns the sorted result.
+     * results and then combined in proper order, resulting in a completely
+     * sorted array.
+     *
+     * @param array partition to sort
+     * @return sorted partition
+     * @see QuickSort
+     * @see SortDemo
+     */
     private Integer[] sort(Integer[] array) {
         System.out.println("***********************************");
         System.out.println("Given:" + arrayAsString(array));
@@ -92,10 +118,19 @@ public class QuickSort {
         return result;
     }
 
+    /**
+     * A getter for the sortedArray
+     * @return sortedArray
+     */
     public Integer[] getSortedArray() {
         return sortedArray;
     }
 
+    /**
+     * return a given array as a string for printing for user confirmation
+     * @param array array requesting string representation
+     * @return string representation of given array
+     */
     private String arrayAsString(Integer[] array) {
         String result = "";
         result += "[";

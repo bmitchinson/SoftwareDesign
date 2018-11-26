@@ -4,11 +4,28 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * A class designed to guide the user through demoing a QuickSort algorithm.
+ * An array is shown before and after being sorted, and the user is in control
+ * of when to start the sort by pressing enter.
+ * <p>
+ * Completed as part of assignment S37_QuickSort_Medium
+ * <p>
+ * Completed as extra credit instead of S35_GraphAlgos_Easy
+ *
+ * @see QuickSort
+ * @see #main(String[])
+ */
 public class SortDemo {
 
     //Change this to how many elements you would like to see sorted
     private static final int ELEMENTS = 100;
 
+    /**
+     *
+     * @param args - unused
+     * @see SortDemo
+     */
     public static void main(String args[]) {
 
         System.out.println("******************************************\n" +
