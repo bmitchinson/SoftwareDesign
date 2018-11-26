@@ -9,7 +9,13 @@ import java.util.HashMap;
 
 /**
  * The Converter class is an extension of a JFrame that allows for a user to
- * convert from Arabic to Roman
+ * convert from Arabic integers to Roman characters. It supports any number in the
+ * range of 1 - 3999, and will validate input as needed.
+ *
+ * @see #Converter()
+ * @see #intToRoman(int)
+ * @see #romanToInt(String)
+ * @see #initalizeRomanTable()
  */
 public class Converter extends JFrame {
 
@@ -24,6 +30,13 @@ public class Converter extends JFrame {
     private JPanel romanPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
     private JPanel arabicPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
 
+    /**
+     * the constructor for converter arranges the needed elements of the GUI and
+     * assigns the required listeners to both text fields.
+     *
+     * @see #intToRoman(int)
+     * @see #romanToInt(String)
+     */
     public Converter() {
         setTitle("Roman Convert");
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
@@ -62,6 +75,13 @@ public class Converter extends JFrame {
 
     }
 
+    /**
+     * This method converts a given integer in the range of 1 - 3999 and converts
+     * it to a set of characters. It is used in the listener to update the roman
+     * text field.
+     * @param num integer to be converted to roman characters
+     * @return String of roman characters that represents the given integer
+     */
     // https://tinyurl.com/BenSWDSource1
     private String intToRoman(int num) {
         if (num < 0 || num > 3999) {
@@ -86,6 +106,12 @@ public class Converter extends JFrame {
         return ans;
     }
 
+    /**
+     * This method converts a set of roman characters to an integer result. It is
+     * used in the listener to update the integer text field.
+     * @param roman string to be parsed and converted to integer value
+     * @return integer value result of parsed roman string.
+     */
     // https://tinyurl.com/BenSWDSource2
     private int romanToInt(String roman) {
         int intNum = 0;
@@ -106,6 +132,11 @@ public class Converter extends JFrame {
         return intNum;
     }
 
+    /**
+     * Initializes the needed table to match characters to their integer value.
+     *
+     * @see #romanToInt(String)
+     */
     private void initalizeRomanTable() {
         table.put('I', 1);
         table.put('X', 10);
