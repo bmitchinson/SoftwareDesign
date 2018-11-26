@@ -7,6 +7,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashMap;
 
+/**
+ * The Converter class is an extension of a JFrame that allows for a user to
+ * convert from Arabic to Roman
+ */
 public class Converter extends JFrame {
 
     // Conversion Table
