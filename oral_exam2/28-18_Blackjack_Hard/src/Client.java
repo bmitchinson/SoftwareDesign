@@ -15,6 +15,18 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * A class to read in messages from the {@link Dealer} that's acting as a server.
+ * It extents the {@link JFrame} class and implements {@link Runnable} so that it
+ * may be executed alongside multiple instances. It holds all values necessary
+ * for viewing the GUI elements and represented cards, as well as holding the
+ * needed {@link Socket} connections.
+ *
+ * @see Dealer
+ * @see JFrame
+ * @see Runnable
+ * @see Socket
+ */
 public class Client extends JFrame implements Runnable {
 
     // GUI Elements
@@ -44,6 +56,10 @@ public class Client extends JFrame implements Runnable {
     private Pile playerPile = new Pile(false);
     private Pile opponentPile = new Pile(false);
 
+    /**
+     * Configure the Client with the necessary GUI properties and placement
+     * within their respective layouts.
+     */
     public Client() {
         // Needed to revalidate and repaint entire after component updates
         self = this;
@@ -90,6 +106,12 @@ public class Client extends JFrame implements Runnable {
         startClient();
     }
 
+    /**
+     * open up the needed {@link Socket} connections and execute the thread
+     * itself.
+     *
+     * @see Socket
+     */
     public void startClient() {
         try {
             connection = new Socket(InetAddress.getByName("127.0.0.1"), 23516);
@@ -104,6 +126,9 @@ public class Client extends JFrame implements Runnable {
         worker.execute(this);
     }
 
+    /**
+     * Await messages delivered by the server
+     */
     public void run() {
         displayMessage("Beginning Run");
         setButtonsActive(false);
@@ -115,28 +140,33 @@ public class Client extends JFrame implements Runnable {
         }
     }
 
+    /**
+     * Process messages delivered from the server
+     *
+     * @param message message originally sent from server, interpreted to take
+     *                action within the client.
+     */
     private void processMessage(String message) {
         displayMessage("Received message type " + message
                 + " from server");
         if (message.equals("Title")) {
             setTitle(input.nextLine());
             setStatus(getTitle());
-        }
-        else if (message.equals("Cards")) {
+        } else if (message.equals("Cards")) {
             updatePile(true);
             updateBoard();
             background.refreshPlayer();
-        }
-        else if (message.equals("OpCards")) {
+        } else if (message.equals("OpCards")) {
             updatePile(false);
             updateBoard();
             background.refreshOpponent();
-        }
-        else if (message.equals("Buttons")) {
-            if(input.nextLine().equals("On")){ setButtonsActive(true); }
-            else { setButtonsActive(false);}
-        }
-        else if (message.equals("GameOver")) {
+        } else if (message.equals("Buttons")) {
+            if (input.nextLine().equals("On")) {
+                setButtonsActive(true);
+            } else {
+                setButtonsActive(false);
+            }
+        } else if (message.equals("GameOver")) {
             setButtonsActive(false);
             gameover = true;
             String type = input.nextLine();
@@ -144,7 +174,7 @@ public class Client extends JFrame implements Runnable {
                 displayMessage("YOU WON :D");
                 setTitle(getTitle() + " - YOU WON!");
                 setStatus("YOU WON!!");
-            } else if (type.equals("Lose")){
+            } else if (type.equals("Lose")) {
                 displayMessage("...you lost :(");
                 setTitle(getTitle() + "- ...you lost :(");
                 setStatus("You lost :(");
@@ -157,16 +187,21 @@ public class Client extends JFrame implements Runnable {
                 setTitle(getTitle() + "- Why Game Over");
                 setStatus("Why Game Over");
             }
-        }
-        else if (message.equals("Message")) {
+        } else if (message.equals("Message")) {
             displayMessage("" + input.nextLine());
-        }
-        else {
+        } else {
             displayMessage("Unsure how to process that.");
         }
     }
 
-    private void updatePile(boolean player){
+    /**
+     * Used to trigger the update of a Player's pile. {@link Pile} is reconstructed
+     * card by card from the server to accurately effect that player's hand visually
+     * on screen.
+     *
+     * @param player choice of player that is being updated.
+     */
+    private void updatePile(boolean player) {
         ArrayList<Card> incomingCards = new ArrayList<>();
 
         String nextMessage = input.nextLine();
@@ -183,38 +218,57 @@ public class Client extends JFrame implements Runnable {
         Card[] cardArray = Arrays.copyOf(objArray, objArray.length, Card[].class);
         Pile update = new Pile(cardArray);
 
-        if (player) { playerPile = update; }
-        else { opponentPile = update; }
+        if (player) {
+            playerPile = update;
+        } else {
+            opponentPile = update;
+        }
 
     }
 
-    private void sendHit(){
+    /**
+     * send a hit command to the server, called from the action listener
+     * of hitButton and stayButton.
+     */
+    private void sendHit() {
         displayMessage("Sending Hit to server");
         output.format("Hit\n");
         output.flush();
     }
 
-    private void sendStay(){
+    /**
+     * send a stay command to the server, called from the action listener
+     * of hitButton and stayButton.
+     */
+    private void sendStay() {
         displayMessage("Sending Stay to server");
         output.format("Stay\n");
         output.flush();
     }
 
-    private void updateBoard(){
+    /**
+     * display in the onscreen log any updates to the board.
+     */
+    private void updateBoard() {
         String playerPileString = " ";
-        for (String string : playerPile.pileAsStrings()){
+        for (String string : playerPile.pileAsStrings()) {
             playerPileString += string + " ";
         }
         String opponentPileString = " ";
-        for (String string : opponentPile.pileAsStrings()){
+        for (String string : opponentPile.pileAsStrings()) {
             opponentPileString += string + " ";
         }
-        displayMessage("Player Hand:"+playerPileString);
-        displayMessage("Player Hand Total:"+playerPile.getBlackjackTotal());
-        displayMessage("Opponent Hand:"+opponentPileString);
-        displayMessage("Opponent Hand Total:"+opponentPile.getBlackjackTotal());
+        displayMessage("Player Hand:" + playerPileString);
+        displayMessage("Player Hand Total:" + playerPile.getBlackjackTotal());
+        displayMessage("Opponent Hand:" + opponentPileString);
+        displayMessage("Opponent Hand Total:" + opponentPile.getBlackjackTotal());
     }
 
+    /**
+     * Display any message in the on screen terminal to the user.
+     *
+     * @param message the message to be displayed to the user
+     */
     private void displayMessage(final String message) {
         SwingUtilities.invokeLater(
                 () -> {
@@ -226,7 +280,12 @@ public class Client extends JFrame implements Runnable {
         );
     }
 
-    private void setStatus(final String newStatus){
+    /**
+     * Display any status to be shown to the user inbetween decks of cards
+     *
+     * @param newStatus status message to be shown
+     */
+    private void setStatus(final String newStatus) {
         SwingUtilities.invokeLater(() -> {
             status.setText(newStatus);
             self.validate();
@@ -234,22 +293,39 @@ public class Client extends JFrame implements Runnable {
         });
     }
 
+    /**
+     * Set the hit and stay buttons disabled or enabled based on status property
+     *
+     * @param status each button is setEnabled to given status
+     */
     private void setButtonsActive(boolean status) {
         displayMessage("Buttons set to " + status);
         hitButton.setEnabled(status);
         stayButton.setEnabled(status);
     }
 
+    /**
+     * Class to represent the image of card, pulled from the local "img" directory
+     * and rescaled as needed to fit within the context of the GUI.
+     */
     private class CardImage extends JPanel {
         BufferedImage cardImage;
 
-        CardImage(char suit, char value, int index){
+        /**
+         * Initialize the image based on the requested suit, value, and where it
+         * lays in the pile in order on screen.
+         *
+         * @param suit  suit of the card
+         * @param value value of the card
+         * @param index order of card in onscreen pile
+         */
+        CardImage(char suit, char value, int index) {
             String url = "/img/cards/" +
                     Character.toString(suit) + Character.toString(value) +
                     ".png";
             try {
                 cardImage = ImageIO.read(this.getClass().getResource(url));
-                cardImage = resize(cardImage, 65,96);
+                cardImage = resize(cardImage, 65, 96);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -257,7 +333,15 @@ public class Client extends JFrame implements Runnable {
             setBounds(index * 25, 0, 65, 93);
         }
 
-        private BufferedImage resize(BufferedImage img, int newW, int newH){
+        /**
+         * A method to resize an image as needed
+         *
+         * @param img  the image to be resized
+         * @param newW the desired width of the newly resized image
+         * @param newH the desired height of the newly resized image
+         * @return the resized image
+         */
+        private BufferedImage resize(BufferedImage img, int newW, int newH) {
             Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
             BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
 
@@ -268,6 +352,11 @@ public class Client extends JFrame implements Runnable {
             return dimg;
         }
 
+        /**
+         * Draw the stored card image post resize to the panel for use in the GUI
+         *
+         * @param g the graphic to be painted
+         */
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -276,11 +365,24 @@ public class Client extends JFrame implements Runnable {
 
     }
 
+    /**
+     * A class to represent visual elements of Blackjack. Holds a row for each
+     * players cards, as well as a label for their total. Also holds methods to
+     * update each part, and paints a card table surface in the background as an
+     * extension of a {@link JPanel}
+     *
+     * @see JPanel
+     */
     private class Background extends JPanel {
         BufferedImage bgImage;
         JLayeredPane playerCardStack = new JLayeredPane();
         JLayeredPane opponentCardStack = new JLayeredPane();
 
+        /**
+         * initialize the many needed GUI elements on screen.
+         *
+         * @param url the url of the card table background
+         */
         Background(String url) {
 
             try {
@@ -290,7 +392,7 @@ public class Client extends JFrame implements Runnable {
             }
 
             status = new JLabel();
-            status.setFont(new Font("Veranda",1,30));
+            status.setFont(new Font("Veranda", 1, 30));
             status.setForeground(Color.white);
             status.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -300,7 +402,7 @@ public class Client extends JFrame implements Runnable {
 
             JPanel inPanel = new JPanel();
             inPanel.setPreferredSize(new Dimension(352, 426));
-            inPanel.setBackground(new Color(0,0,0,0));
+            inPanel.setBackground(new Color(0, 0, 0, 0));
             inPanel.setLayout(new BoxLayout(inPanel, BoxLayout.Y_AXIS));
 
             opponentSpace = new JPanel();
@@ -309,22 +411,22 @@ public class Client extends JFrame implements Runnable {
             opponentSpace.setMaximumSize(new Dimension(352, 142));
             opponentSpace.setMinimumSize(new Dimension(352, 142));
             opponentSpace.setPreferredSize(new Dimension(352, 142));
-            opponentSpace.setLayout(new FlowLayout(FlowLayout.LEADING, 15,15));
+            opponentSpace.setLayout(new FlowLayout(FlowLayout.LEADING, 15, 15));
 
             //opponentCardStack.setBorder(BorderFactory.createLineBorder(Color.black));
-            opponentCardStack.setPreferredSize(new Dimension(250,110));
+            opponentCardStack.setPreferredSize(new Dimension(250, 110));
 
             opponentTotal = new JLabel();
-            opponentTotal.setFont(new Font("Veranda",1,28));
+            opponentTotal.setFont(new Font("Veranda", 1, 28));
             opponentTotal.setText(Integer.toString(opponentPile.getBlackjackTotal()));
 
             JLabel opponentLabel = new JLabel("Other:");
-            opponentLabel.setFont(new Font("Veranda",1,14));
+            opponentLabel.setFont(new Font("Veranda", 1, 14));
 
             JPanel opponentLabelSet = new JPanel();
             opponentLabelSet.setLayout(new BoxLayout(opponentLabelSet, BoxLayout.Y_AXIS));
             //opponentLabelSet.setBorder(BorderFactory.createLineBorder(Color.black));
-            opponentLabelSet.setBackground(new Color(0,0,0,0));
+            opponentLabelSet.setBackground(new Color(0, 0, 0, 0));
 
             opponentLabelSet.add(opponentLabel);
             opponentLabelSet.add(opponentTotal);
@@ -333,7 +435,7 @@ public class Client extends JFrame implements Runnable {
             opponentSpace.add(opponentLabelSet);
 
             JPanel middle = new JPanel();
-            middle.setBackground(new Color(0,0,0,0));
+            middle.setBackground(new Color(0, 0, 0, 0));
             middle.setPreferredSize(new Dimension(352, 70));
             middle.setLayout(new BorderLayout());
             middle.add(status, BorderLayout.CENTER);
@@ -344,22 +446,22 @@ public class Client extends JFrame implements Runnable {
             playerSpace.setMaximumSize(new Dimension(352, 142));
             playerSpace.setMinimumSize(new Dimension(352, 142));
             playerSpace.setPreferredSize(new Dimension(352, 142));
-            playerSpace.setLayout(new FlowLayout(FlowLayout.LEADING, 15,15));
+            playerSpace.setLayout(new FlowLayout(FlowLayout.LEADING, 15, 15));
 
             //playerCardStack.setBorder(BorderFactory.createLineBorder(Color.black));
-            playerCardStack.setPreferredSize(new Dimension(250,110));
+            playerCardStack.setPreferredSize(new Dimension(250, 110));
 
             playerTotal = new JLabel();
-            playerTotal.setFont(new Font("Veranda",1,28));
+            playerTotal.setFont(new Font("Veranda", 1, 28));
             playerTotal.setText(Integer.toString(playerPile.getBlackjackTotal()));
 
             JLabel playerLabel = new JLabel("You:");
-            playerLabel.setFont(new Font("Veranda",1,14));
+            playerLabel.setFont(new Font("Veranda", 1, 14));
 
             JPanel playerLabelSet = new JPanel();
             playerLabelSet.setLayout(new BoxLayout(playerLabelSet, BoxLayout.Y_AXIS));
             //playerLabelSet.setBorder(BorderFactory.createLineBorder(Color.black));
-            playerLabelSet.setBackground(new Color(0,0,0,0));
+            playerLabelSet.setBackground(new Color(0, 0, 0, 0));
 
             playerLabelSet.add(playerLabel);
             playerLabelSet.add(playerTotal);
@@ -372,11 +474,11 @@ public class Client extends JFrame implements Runnable {
             inPanel.add(playerSpace);
 
             JPanel top = new JPanel();
-            top.setBackground(new Color(0,0,0,0));
+            top.setBackground(new Color(0, 0, 0, 0));
             top.setPreferredSize(new Dimension(392, 37));
 
             JPanel bot = new JPanel();
-            bot.setBackground(new Color(0,0,0,0));
+            bot.setBackground(new Color(0, 0, 0, 0));
             bot.setPreferredSize(new Dimension(392, 37));
 
             add(inPanel, BorderLayout.CENTER);
@@ -385,15 +487,19 @@ public class Client extends JFrame implements Runnable {
 
         }
 
-        public void refreshOpponent(){
+        /**
+         * Restack the cards on screen that are currently held in the opponents
+         * stored pile within {@link Client}
+         */
+        private void refreshOpponent() {
             SwingUtilities.invokeLater(() -> {
                 opponentTotal.setText("\n" + Integer.toString(opponentPile.getBlackjackTotal()));
                 opponentCardStack.removeAll();
                 int i = 0;
-                for (String card : opponentPile.pileAsStrings()){
+                for (String card : opponentPile.pileAsStrings()) {
                     CardImage tmp = new CardImage(card.charAt(0), card.charAt(1), i);
-                    tmp.setBounds(i * 25, 0, 65,100);
-                    opponentCardStack.add(tmp, new Integer(i*100));
+                    tmp.setBounds(i * 25, 0, 65, 100);
+                    opponentCardStack.add(tmp, new Integer(i * 100));
                     i++;
                 }
                 self.validate();
@@ -401,15 +507,19 @@ public class Client extends JFrame implements Runnable {
             });
         }
 
-        public void refreshPlayer(){
+        /**
+         * Restack the cards on screen that are currently held in the opponents
+         * stored pile within {@link Client}
+         */
+        private void refreshPlayer() {
             SwingUtilities.invokeLater(() -> {
                 playerTotal.setText("\n" + Integer.toString(playerPile.getBlackjackTotal()));
                 playerCardStack.removeAll();
                 int i = 0;
-                for (String card : playerPile.pileAsStrings()){
+                for (String card : playerPile.pileAsStrings()) {
                     CardImage tmp = new CardImage(card.charAt(0), card.charAt(1), i);
-                    tmp.setBounds(i * 25, 0, 65,100);
-                    playerCardStack.add(tmp,new Integer(i*100));
+                    tmp.setBounds(i * 25, 0, 65, 100);
+                    playerCardStack.add(tmp, new Integer(i * 100));
                     i++;
                 }
                 self.validate();
@@ -417,6 +527,11 @@ public class Client extends JFrame implements Runnable {
             });
         }
 
+        /**
+         * Paint card background surface underneath GUI elements
+         *
+         * @param g background image to be painted underneath
+         */
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);

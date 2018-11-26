@@ -13,7 +13,23 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-// TODO: JDoc that are transparent about the reference of "fig28_11_14"
+/**
+ * The Dealer class is an extension of the {@link JFrame} object that fulfils many
+ * purposes in the operation of running the game of BlackJack. It initializes
+ * all of the Game Logic needed to play, including the two {@link Player} runnables,
+ * a deck of cards (using the {@link Pile} class), all gui elements configured in
+ * {@link #Dealer()}, thread management with Locks for sleep and wake each Player,
+ * and the {@link Socket} connections used to deliver input to each player.
+ * <p>
+ * This class and it's lock and thread management is heavily modeled after the
+ * provided textbook example: "28_11_14".
+ *
+ * @author Ben Mitchinson
+ * @see JFrame
+ * @see Player
+ * @see #Dealer()
+ * @see Socket
+ */
 public class Dealer extends JFrame {
 
     // Game Logic
@@ -34,6 +50,21 @@ public class Dealer extends JFrame {
     private Condition otherPlayerConnected;
     private Condition otherPlayerTurn;
 
+    /**
+     * The dealer constructor configures the GUI of the server log using
+     * {@link JFrame} elements. It then initializes both {@link Player} objects,
+     * and configures a newly shuffled {@link Pile} to act as the deck for dealing.
+     * It also opens up the initial conditions for thread notifications upon later
+     * locks, and initializes the {@link Socket} connections to port 23516. It
+     * also deals 2 cards from the pile to the players for their opening hand.
+     *
+     * @see JFrame
+     * @see Player
+     * @see Socket
+     * @see Player
+     * @see ReentrantLock
+     * @see Executors
+     */
     public Dealer() {
         super("Dealer (Server Log)");
 
@@ -72,6 +103,11 @@ public class Dealer extends JFrame {
 
     }
 
+    /**
+     * The execute method initializes two new player objects with the proper
+     * connections and titles, suspends until both are connected, and executes
+     * both threads, detailed in the {@link Player} runnables.
+     */
     public void execute() {
         try {
             displayMessage("Waiting for first connection");
@@ -94,6 +130,13 @@ public class Dealer extends JFrame {
         }
     }
 
+    /**
+     * DisplayMessage is a method used throughout the class to properly log a
+     * message for display in the main server log text area.
+     *
+     * @param message the desired message to be displayed.
+     * @see SwingUtilities
+     */
     private void displayMessage(final String message) {
         SwingUtilities.invokeLater(
                 () -> {
@@ -103,7 +146,16 @@ public class Dealer extends JFrame {
         );
     }
 
-    public boolean isGameOver() {
+    /**
+     * isGameOver calculates the total of each players hand using the {@link Pile}
+     * method getBlackjackTotal. Depending on which {@link Player} holds a hand
+     * over 21, the method updates the required GUI elements of the game, and
+     * returns true so that dependent threads know to stop playing. Otherwise,
+     * if no players are over 21, the method returns false and the game continues.
+     *
+     * @return if the game is over or not based on player totals
+     */
+    private boolean isGameOver() {
         if (playersHands[0].getBlackjackTotal() > 21) {
             players[0].sendMessage("GameOver", "Lose");
             players[1].sendMessage("OpCards", playersHands[0].pileAsStrings());
@@ -124,6 +176,21 @@ public class Dealer extends JFrame {
         }
     }
 
+    /**
+     * The Player class implements the {@link Runnable} interface so that it may
+     * be executed upon {@link Socket} connection in {@link #execute()}. It's
+     * initialized with connections to the server ({@link Dealer}), and executes
+     * with logic further detailed in {@link #run()}. It holds methods to deliver
+     * messages to the connected {@link Client}, and receive button choices from
+     * {@link #getHit()}.
+     *
+     * @see Runnable
+     * @see Socket
+     * @see #execute()
+     * @see Dealer
+     * @see Client
+     * @see #run()
+     */
     private class Player implements Runnable {
         private Socket connection;
         private Scanner input;
@@ -135,7 +202,15 @@ public class Dealer extends JFrame {
         private boolean suspended = true;
         private boolean hit;
 
-        public Player(Socket socket, String name) {
+        /**
+         * The player constructor creates {@link Scanner} and {@link Formatter}
+         * objects for {@link Socket} interactions with the {@link Client}. It then
+         * assigns itself the needed player names for reference during execution.
+         *
+         * @param socket Socket object to hold a connection to the server
+         * @param name   player name to reference during execution
+         */
+        private Player(Socket socket, String name) {
             this.playerName = name;
             if (playerName.equals("Player One")) {
                 otherPlayerName = "Player Two";
@@ -154,6 +229,17 @@ public class Dealer extends JFrame {
             }
         }
 
+        /**
+         * The run() method that is executed during thread launch, sends the
+         * needed messages to the {@link Client} for interpretation. It is reliant
+         * on the {@link #isGameOver()} function to continue, and awaits for
+         * {@link Player} objects to be connected, as well as closes the connections
+         * when the game ends.
+         *
+         * @see #isGameOver()
+         * @see Client
+         * @see Player
+         */
         public void run() {
             try {
                 displayMessage(playerName + " running");
@@ -162,7 +248,6 @@ public class Dealer extends JFrame {
                 if (playerName.equals("Player One")) {
                     otherPlayerIndex = 1;
                     playerIndex = 0;
-                    // TODO: Remove this message for sure
                     String cardsDevMessage = "Sending Player One cards:";
                     for (String card : playersHands[0].pileAsStrings()) {
                         cardsDevMessage += (" " + card);
@@ -260,14 +345,33 @@ public class Dealer extends JFrame {
             }
         }
 
-        public void sendMessage(String type, String message) {
+        /**
+         * Send message uses the {@link Formatter} object created in
+         * {@link #Player(Socket, String)} to send messages to connected
+         * {@link Client}.
+         *
+         * @param type    a prefix to the message to represent the type of following
+         *                message
+         * @param message contents of message type "type" to be interpreted by
+         *                the client.
+         * @see #Player(Socket, String)
+         */
+        private void sendMessage(String type, String message) {
             output.format(type + "\n");
             output.flush();
             output.format(message + "\n");
             output.flush();
         }
 
-        public void sendMessage(String type, String[] messages) {
+        /**
+         * An alternative to {@link #sendMessage(String, String)} that handles the same,
+         * except can deliver an array of messages instead of one string.
+         *
+         * @param type     a prefix to the message to represent the type of following
+         *                 messages for the client
+         * @param messages a set of messages to be delivered following the prefix
+         */
+        private void sendMessage(String type, String[] messages) {
             output.format(type + "\n");
             output.flush();
             for (String message : messages) {
@@ -278,6 +382,13 @@ public class Dealer extends JFrame {
             output.flush();
         }
 
+        /**
+         * Utilizes the {@link Scanner} object created earlier to get input from
+         * the {@link Client} on if they would like to "hit" or "stay" on their
+         * active turn.
+         *
+         * @return true if the player would like to "hit" or false otherwise.
+         */
         private boolean getHit() {
             if (input.hasNext()) {
                 return input.nextLine().equals("Hit");
@@ -285,7 +396,13 @@ public class Dealer extends JFrame {
             return false;
         }
 
-        public void setSuspended(boolean status) {
+        /**
+         * a lock safety as advised to use, so that the Player object knows if
+         * the dealer has suspended it upon being signaled.
+         *
+         * @param status saftey for permission of player to operate
+         */
+        private void setSuspended(boolean status) {
             suspended = status;
         }
     }
