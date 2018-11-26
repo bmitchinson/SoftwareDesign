@@ -1,5 +1,20 @@
 import java.util.Scanner;
 
+/**
+ * Check is an object that represents an amount of USD currency in both integer
+ * amounts for cents and dollars, as well as it's equivalent total in written
+ * english. It contains methods to prompt the user for their desired integer
+ * amount to convert using {@link #promptUser()}, and then is able to convert
+ * that amount using {@link #intToEnglish()}.
+ * The class holds the necessary english equivalents for converting dollar amounts,
+ * and supports the translation of any USD amount under $1000. It also validates
+ * user input to make sure it holds an amount within that range.
+ *
+ * @see Check()
+ * @see #promptUser()
+ * @see #intToEnglish()
+ * @see #validateEntry(String)
+ */
 public class Check {
     // Conversion Variables
     private int dollar = -1;
@@ -15,6 +30,16 @@ public class Check {
     private String[] tens = {"TWENTY", "THIRTY", "FOURTY", "FIFTY", "SIXTY",
             "SEVENTY", "EIGHTY", "NINETY"};
 
+    /**
+     * The promptUser method presents instructions to the user on how to enter
+     * their desired currency amount for interpretation, and presents the results
+     * of input after conversion using {@link #intToEnglish()}. It also utilizes
+     * {@link #validateEntry(String)} to validate what the user has entered as
+     * possible for conversion.
+     *
+     * @see #intToEnglish()
+     * @see #validateEntry(String)
+     */
     public void promptUser() {
         String entry;
         boolean entryIsValid = false;
@@ -31,13 +56,22 @@ public class Check {
             }
             entryIsValid = validateEntry(entry);
         }
-        // line to confirm the validated user input
-        // inputCheck();
         intToEnglish();
         System.out.println("That amount in written english is: " + english);
         System.out.println("******************************************");
     }
 
+    /**
+     * The intToEnglish method builds an english translation of the already validated
+     * and stored cents and ints values. It references english translations stored
+     * in private class variables like {@link #tens} and {@link #names}. It handles
+     * the case in which the user is only translating cents, dollars, or both in
+     * combination.
+     *
+     * @see #tens
+     * @see #names
+     * @see #validateEntry(String)
+     */
     private void intToEnglish() {
         String centsPart = "";
         String dollarsPart = "";
@@ -58,14 +92,23 @@ public class Check {
             if (twoDigit < 20) {
                 dollarsPart += names[twoDigit - 1];
             } else {
-                dollarsPart += tens[twoDigit/10-2] + "-" +
-                        names[twoDigit%10-1];
+                dollarsPart += tens[twoDigit / 10 - 2] + "-" +
+                        names[twoDigit % 10 - 1];
             }
         }
 
         english = dollarsPart + centsPart;
     }
 
+    /**
+     * The validateEntry method receives the input from the user and parses it
+     * to ints for storage as cent and dollar values. {@link #cent} {@link #dollar}
+     *
+     * @param entry - String provided by the user for their desired amount to
+     *              translate into english.
+     * @return true if the entry was successfully validated, false if an error was
+     * encountered.
+     */
     private boolean validateEntry(String entry) {
         boolean valid = true;
         int amount;
@@ -113,11 +156,6 @@ public class Check {
         }
 
         return valid;
-    }
-
-    private void inputCheck() {
-        System.out.print("Amount entered: ");
-        System.out.println("Dollars:" + dollar + " Cents:" + cent);
     }
 
 }
